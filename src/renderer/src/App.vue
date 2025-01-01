@@ -17,7 +17,8 @@ import { darkTheme, NConfigProvider, zhCN } from 'naive-ui'
         baseColor: '#fff',
       },
       Drawer: {
-        bodyPadding: '12px 0',
+        bodyPadding: '0',
+        headerPadding: '0',
       },
     }"
   >

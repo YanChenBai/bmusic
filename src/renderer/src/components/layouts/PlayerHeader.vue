@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { NInputGroup } from 'naive-ui'
+
 const inputVal = ref('')
 const router = useRouter()
+const [isFocus, focusToggle] = useToggle(false)
 function search() {
   if (inputVal.value.trim().length === 0)
     return
@@ -12,18 +15,48 @@ function search() {
     },
   })
 }
+
+const close = () => window.invokes.close()
+const minimize = () => window.invokes.minimize()
+
+function onBack() {
+  router.back()
+}
 </script>
 
 <template>
   <div class="border-(0 b-1px solid #2E2E30) drag grid-(~ cols-[220px_1fr]) content-center">
-    <div />
-    <div class="flex justify-between">
-      <div class="w-400px">
-        <NInput v-model:value="inputVal" class="no-drag" :autofocus="false" @keydown.enter="search" />
+    <div class="flex items-center gap0.5 pl5 pt1">
+      <div class="i-material-symbols:music-cast-rounded size-7.8 text-#EE5F8E" />
+      <NGradientText :size="22" class="font-900">
+        BMUSIC
+      </NGradientText>
+    </div>
+    <div class="flex justify-end items-center">
+      <NPageHeader class="no-drag" @back="onBack" />
+      <div class="flex w-full justify-end">
+        <div class="transition-all" :class="[isFocus ? 'w-560px mr-89px' : 'w-300px']">
+          <NInputGroup class="no-drag">
+            <NInput
+              v-model:value="inputVal"
+              :autofocus="false"
+              @keydown.enter="search"
+              @focus="() => focusToggle(true)"
+              @blur="() => focusToggle(false)"
+            />
+            <NButton type="primary" ghost @click="search">
+              <template #icon>
+                <NIcon size="22">
+                  <div class="i-material-symbols:search-rounded" />
+                </NIcon>
+              </template>
+            </NButton>
+          </NInputGroup>
+        </div>
       </div>
 
       <div class="px-5 flex items-center gap-4">
-        <NButton class="no-drag" circle quaternary :focusable="false">
+        <NButton class="no-drag" circle quaternary :focusable="false" @click="minimize">
           <template #icon>
             <NIcon size="42">
               <div class="i-material-symbols:check-indeterminate-small-rounded" />
@@ -31,7 +64,7 @@ function search() {
           </template>
         </NButton>
 
-        <NButton class="no-drag" circle quaternary :focusable="false">
+        <NButton class="no-drag" circle quaternary :focusable="false" @click="close">
           <template #icon>
             <NIcon size="42">
               <div class="i-material-symbols:close-small-rounded" />

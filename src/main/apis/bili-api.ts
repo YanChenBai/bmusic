@@ -11,10 +11,7 @@ export async function getPlaylist(bvid: string) {
   })
     .json<Resp<VideoPlayerData>>()
 
-  if (data.code !== 0)
-    throw new Error(data.message)
-
-  return data.data
+  return data
 }
 
 export async function getMediaInfo(bvid: string, cid: number) {
@@ -26,8 +23,5 @@ export async function getMediaInfo(bvid: string, cid: number) {
     },
   }).json<Resp<MediaInfo>>()
 
-  if (data.code !== 0)
-    throw new Error(data.message)
-
-  return data.data
+  return data
 }

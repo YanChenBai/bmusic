@@ -12,13 +12,13 @@ const { collections } = useCollection()
           <div class="text-#fff text-md font-bold">
             我的音乐
           </div>
-          <NButton quaternary circle size="small">
+          <!-- <NButton quaternary circle size="small">
             <template #icon>
               <NIcon :size="20">
                 <div class="i-material-symbols:add-2-rounded" />
               </NIcon>
             </template>
-          </NButton>
+          </NButton> -->
         </div>
         <MusicCollection v-for="collection in collections" :key="collection.bvid" :collection="collection" />
       </div>

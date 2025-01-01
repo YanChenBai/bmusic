@@ -11,4 +11,12 @@ export const MainHandler = defineHandler<IMainHandler>(MainHandlerProto, {
   async getPlaylist(_req, bvid: string) {
     return await getPlaylist(bvid)
   },
+
+  close(req) {
+    return req.win.close()
+  },
+
+  minimize(req) {
+    return req.win.minimize()
+  },
 })

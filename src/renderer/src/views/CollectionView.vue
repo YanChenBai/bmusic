@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Song } from '@renderer/types/playlist'
+import type { PlaylistSong } from '@renderer/stores/player'
 import MusicCollectionCtrl from '@renderer/components/MusicCollectionCtrl.vue'
 import SongInfo from '@renderer/components/SongInfo.vue'
 import { formatSeconds } from '@renderer/utils/formatSeconds'
@@ -10,34 +10,74 @@ const props = defineProps<{
 }>()
 
 const { playSong, addListToPlaylist } = usePlayer()
+const { addCollection } = useCollection()
+
 const { data, error, isLoading } = useQuery({
   key: () => ['getPlayerData', props.bvid],
-  query: () => window.invokes.getPlaylist(props.bvid),
+  query: async () => {
+    return await window.invokes.getPlaylist(props.bvid)
+      .then(({ data, code, message: msg }) => {
+        if (code !== 0)
+          throw new Error(msg ?? '获取列表失败~')
+
+        const map = new Map<string, PlaylistSong>()
+
+        // 视频列表转换通用数据
+        for (const item of data.pages) {
+          const val = {
+            bvid: data.bvid,
+            cid: item.cid,
+            cover: item.first_frame ?? data.pic,
+            name: item.part,
+            author: data.owner.name,
+            longTime: item.duration,
+          }
+          map.set(`${data.bvid}:${item.cid}`, val)
+        }
+
+        // 合集视频转换为通用数据
+        if (data.season_id) {
+          data.ugc_season.sections
+            .map(item => item.episodes)
+            .flat()
+            .forEach((item) => {
+              const val = {
+                bvid: item.bvid,
+                cid: item.page.cid,
+                cover: item.arc.pic,
+                name: item.arc.title,
+                author: '-',
+                longTime: item.page.duration,
+              }
+              map.set(`${item.bvid}:${item.page.cid}`, val)
+            })
+        }
+
+        return {
+          title: data.title,
+          desc: data.desc,
+          author: data.owner.name,
+          uface: data.owner.face,
+          cover: data.pic,
+          list: map.entries().map(([_, v]) => v).toArray(),
+        }
+      })
+  },
 })
 
-const columns: DataTableColumns<Song> = [
+const columns: DataTableColumns<PlaylistSong> = [
   {
     key: 'name',
     title: '歌名/歌手',
     render(rowData) {
-      return h(SongInfo, {
-        name: rowData.part,
-        cover: rowData.first_frame,
-        author: data.value?.owner.name ?? '',
-      })
+      return h(SongInfo, rowData)
     },
   },
   {
     key: 'part',
     render(rowData) {
       return h(MusicCollectionCtrl, {
-        song: {
-          bvid: props.bvid,
-          cid: rowData.cid,
-          cover: rowData.first_frame,
-          author: data.value?.owner.name ?? '',
-          name: rowData.part,
-        },
+        song: rowData,
       })
     },
   },
@@ -45,12 +85,12 @@ const columns: DataTableColumns<Song> = [
     key: 'lengthTime',
     title: '时长',
     render(rowData) {
-      return formatSeconds(rowData.duration)
+      return formatSeconds(rowData.longTime)
     },
   },
 ]
 
-function rowProps(rowData: Song) {
+function rowProps(rowData: PlaylistSong) {
   let preClickTime = 0
   return {
     onClick: () => {
@@ -58,33 +98,26 @@ function rowProps(rowData: Song) {
         preClickTime = Date.now()
         return
       }
-      playSong({
-        bvid: props.bvid,
-        cid: rowData.cid,
-        cover: rowData.first_frame,
-        author: data.value?.owner.name ?? '',
-        name: rowData.part,
-      })
+      playSong(rowData)
     },
   }
 }
 
 function playCollection() {
-  const pages = data.value?.pages
-  if (!pages || pages.length === 0)
+  const list = data.value?.list
+  if (!list || list.length === 0)
     return
 
-  const collectionSongs = pages.map((item) => {
-    return {
-      bvid: props.bvid,
-      cid: item.cid,
-      cover: item.first_frame,
-      author: data.value?.owner.name ?? '',
-      name: item.part,
-    }
+  addListToPlaylist(list)
+  playSong(list[0])
+}
+
+function onAddCollection() {
+  addCollection({
+    bvid: props.bvid,
+    title: data.value?.title ?? '',
+    cover: data.value?.cover ?? '',
   })
-  addListToPlaylist(collectionSongs)
-  playSong(collectionSongs[0])
 }
 </script>
 
@@ -95,7 +128,7 @@ function playCollection() {
         <NResult v-if="error" status="404" title="请求错误" description="生活总归带点荒谬" />
         <template v-else>
           <div class="grid-(~ cols-[128px_1fr]) gap-4">
-            <CoverImage size="128px" class="rd-2" :src="data?.pic" />
+            <CoverImage size="128px" class="rd-2" :src="data?.cover" />
             <div flex flex-col>
               <div class="flex flex-col gap-1">
                 <TextLoadPlaceholder :loading="isLoading" skeleton-class="max-w-360px">
@@ -105,9 +138,9 @@ function playCollection() {
                 </TextLoadPlaceholder>
 
                 <div class="flex gap-2">
-                  <CoverImage size="16px" class="rd-full" :src="data?.owner.face" />
+                  <CoverImage size="16px" class="rd-full" :src="data?.cover" />
                   <TextLoadPlaceholder :loading="isLoading" skeleton-class="max-w-300px">
-                    <span class="text-(3 #A2A2A3)">{{ data?.owner.name }}</span>
+                    <span class="text-(3 #A2A2A3)">{{ data?.author }}</span>
                   </TextLoadPlaceholder>
                 </div>
 
@@ -120,7 +153,7 @@ function playCollection() {
                 </TextLoadPlaceholder>
               </div>
 
-              <div class="flex gap-2 mt-auto">
+              <div class="flex gap-2 mt-auto pt-2">
                 <NButton round size="small" secondary @click="playCollection">
                   <template #icon>
                     <NIcon size="20">
@@ -137,7 +170,7 @@ function playCollection() {
                   </template>
                   下载
                 </NButton> -->
-                <NButton round size="small" secondary>
+                <NButton round size="small" secondary @click="onAddCollection">
                   <template #icon>
                     <NIcon size="16">
                       <div class="i-material-symbols:add-circle-outline-rounded" />
@@ -159,7 +192,7 @@ function playCollection() {
               },
             }"
           >
-            <NDataTable :bordered="false" :columns="columns" :data="data?.pages ?? []" striped :bottom-bordered="false" :single-column="true" :row-props="rowProps" />
+            <NDataTable class="select-none" :bordered="false" :columns="columns" :data="data?.list ?? []" striped :bottom-bordered="false" :single-column="true" :row-props="rowProps" />
           </NConfigProvider>
         </template>
       </div>

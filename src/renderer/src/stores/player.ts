@@ -24,6 +24,7 @@ export interface PlaylistSong {
   cover: string
   name: string
   author: string
+  longTime: number
 }
 
 export interface PlayerInfo {
@@ -44,7 +45,7 @@ export const usePlayerStore = defineStore('player', () => {
   })
   const playerInfo = reactive<PlayerInfo>({
     progress: 0,
-    volume: 0.5,
+    volume: 50,
     url: null,
     mode: PlayerModeEnum.LINEAR,
     state: PlayerStateEnum.PAUSE,
@@ -66,7 +67,7 @@ export const usePlayerStore = defineStore('player', () => {
     return playlist.value.unshift(data)
   }
 
-  function delPlaylist(data: PlaylistSong) {
+  function delPlaylist(data: { bvid: string, cid: number }) {
     const idx = findindexPlaylistSong(data.bvid, data.cid)
 
     if (idx === -1)
@@ -86,7 +87,11 @@ export const usePlayerStore = defineStore('player', () => {
 
     curPlaySong.value = song
     window.invokes.getMediaInfo(song.bvid, song.cid)
-      .then((data) => {
+      .then(({ data, code, message: msg }) => {
+        if (code !== 0) {
+          message.error(msg ?? '获取数据失败')
+          return
+        }
         playerInfo.url = data.durl[0].url
         playerInfo.longTime = data.timelength / 1000
       })
@@ -107,6 +112,10 @@ export const usePlayerStore = defineStore('player', () => {
   const play = () => modifyPlayerState(PlayerStateEnum.PLAY)
   const pause = () => modifyPlayerState(PlayerStateEnum.PAUSE)
 
+  function modifyVolume(value: number) {
+    playerInfo.volume = Math.max(0, Math.min(100, value))
+  }
+
   return {
     playlist,
     playerInfo,
@@ -119,16 +128,25 @@ export const usePlayerStore = defineStore('player', () => {
     play,
     pause,
     onPlayerState,
+    modifyVolume,
   }
 }, {
   persist: {
-    pick: ['playlist', 'curPlaySong', 'playerInfo'],
+    pick: [
+      'playlist',
+      'curPlaySong',
+      'playerInfo.longTime',
+      'playerInfo.mode',
+      'playerInfo.progress',
+      'playerInfo.url',
+      'playerInfo.volume',
+    ],
   },
 })
 
 export function usePlayer() {
   const playerStore = usePlayerStore()
-  const { addPlaylist, delPlaylist, addListToPlaylist, playSong, onPlayerState, play, pause } = playerStore
+  const { addPlaylist, delPlaylist, addListToPlaylist, playSong, onPlayerState, play, pause, modifyVolume } = playerStore
   const { playerInfo, playlist, curPlaySong } = storeToRefs(playerStore)
 
   return {
@@ -142,5 +160,6 @@ export function usePlayer() {
     onPlayerState,
     play,
     pause,
+    modifyVolume,
   }
 }

@@ -159,6 +159,8 @@ declare global {
   const useClipboard: typeof import('@vueuse/core')['useClipboard']
   const useClipboardItems: typeof import('@vueuse/core')['useClipboardItems']
   const useCloned: typeof import('@vueuse/core')['useCloned']
+  const useCollection: typeof import('./src/stores/collection')['useCollection']
+  const useCollectionStore: typeof import('./src/stores/collection')['useCollectionStore']
   const useColorMode: typeof import('@vueuse/core')['useColorMode']
   const useConfirmDialog: typeof import('@vueuse/core')['useConfirmDialog']
   const useCounter: typeof import('@vueuse/core')['useCounter']
@@ -324,6 +326,9 @@ declare global {
   // @ts-ignore
   export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
+  // @ts-ignore
+  export type { CollectionItem, FavoriteItem } from './src/stores/collection'
+  import('./src/stores/collection')
   // @ts-ignore
   export type { PlayerModeEnum, PlayerStateEnum, PlaylistSong, PlayerInfo } from './src/stores/player'
   import('./src/stores/player')

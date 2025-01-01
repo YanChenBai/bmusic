@@ -1,7 +1,26 @@
 <script setup lang="ts">
-
+const { collections } = useCollection()
 </script>
 
 <template>
-  <div class="text-white/50 font-900 size-full" />
+  <NScrollbar class="h-[calc(100vh-80px-60px)]">
+    <div class="grid-(~ cols-5) p3 box-border gap-3">
+      <NCard
+        v-for="{ bvid, cover, title } in collections"
+        :key="bvid"
+        class=" cursor-pointer"
+        hoverable
+        content-class="!px2 !py1"
+        @click="$router.push({ name: 'collection', params: { bvid } })"
+      >
+        <template #cover>
+          <CoverImage size="full" class="aspect-square" :src="cover" />
+        </template>
+
+        <NEllipsis :line-clamp="2" :tooltip="{ placement: 'bottom', contentClass: 'w-200px' }">
+          <span class="text-3">{{ title }}</span>
+        </NEllipsis>
+      </NCard>
+    </div>
+  </NScrollbar>
 </template>

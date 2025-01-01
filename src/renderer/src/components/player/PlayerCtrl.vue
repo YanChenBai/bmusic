@@ -18,8 +18,8 @@ function playOrPause() {
 </script>
 
 <template>
-  <div class="flex flex-col items-center box-border px15 pt-3 w-full">
-    <div class="flex gap-2">
+  <div class="flex flex-col items-center box-border px15 pt-3 w-full select-none">
+    <div class="flex gap-2 items-center">
       <NButton quaternary circle>
         <template #icon>
           <NIcon :size="26">
@@ -27,9 +27,9 @@ function playOrPause() {
           </NIcon>
         </template>
       </NButton>
-      <NButton circle type="primary" @click="playOrPause">
+      <NButton circle type="primary" class="size-7.5" @click="playOrPause">
         <template #icon>
-          <NIcon :size="26">
+          <NIcon :size="24">
             <div v-if="playerInfo.state === PlayerStateEnum.PLAY" class="i-material-symbols:pause-rounded" />
             <div v-else class="i-material-symbols:play-arrow-rounded" />
           </NIcon>

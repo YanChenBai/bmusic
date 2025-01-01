@@ -4,6 +4,10 @@ export interface CollectionItem {
   title: string
 }
 
+export interface FavoriteItem extends CollectionItem {
+  cid: number
+}
+
 export const useCollectionStore = defineStore('collection', () => {
   const collections = ref<CollectionItem[]>([
     {
@@ -13,17 +17,24 @@ export const useCollectionStore = defineStore('collection', () => {
     },
   ])
 
+  const favorites = ref<FavoriteItem[]>([])
+
   function addCollection(item: CollectionItem) {
+    const findIdx = collections.value.findIndex(i => i.bvid === item.bvid)
+    if (findIdx !== -1)
+      return
+
     collections.value.push(item)
   }
 
   return {
     collections,
+    favorites,
     addCollection,
   }
 }, {
   persist: {
-    pick: ['collections'],
+    pick: ['collections', 'favorites'],
   },
 })
 

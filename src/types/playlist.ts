@@ -42,6 +42,8 @@ export interface VideoPlayerData {
   disable_show_up_info: boolean
   is_story_play: number
   is_view_self: boolean
+  season_id?: 4355599
+  ugc_season: UGCSeason
 }
 interface Honorreply {
 }
@@ -113,4 +115,26 @@ interface Descv2 {
   raw_text: string
   type: number
   biz_id: number
+}
+
+interface Section {
+  page: Song
+  bvid: string
+  arc: {
+    pic: string
+    title: string
+  }
+}
+
+interface UGCSeason {
+  title: string
+  cover: string
+  mid: number
+  sections: {
+    episodes: Section[]
+    id: number
+    season_id: number
+    title: string
+    type: number
+  }[]
 }

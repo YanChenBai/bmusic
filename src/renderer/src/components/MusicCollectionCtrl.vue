@@ -7,14 +7,14 @@ const props = defineProps<{
 
 const { addPlaylist } = usePlayer()
 
-function onAdd() {
+function onClick() {
   addPlaylist(props.song)
 }
 </script>
 
 <template>
   <div>
-    <NButton circle quaternary @click.stop="onAdd">
+    <NButton circle quaternary @click.stop="onClick">
       <template #icon>
         <NIcon size="22">
           <div class="i-material-symbols:add-circle-outline-rounded" />

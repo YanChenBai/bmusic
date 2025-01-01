@@ -9,7 +9,7 @@ defineProps<{
 
 <template>
   <div
-    class="grid-(~ cols-[32px_1fr]) gap-2 grid-items-center p1 rd-2 transition cursor-pointer hover"
+    class="grid-(~ cols-[32px_1fr]) gap-2 grid-items-center p1 rd-2 transition cursor-pointer hover select-none"
     @click="$router.push({
       name: 'collection',
       params: {
@@ -18,8 +18,8 @@ defineProps<{
     })"
   >
     <CoverImage size="32px" :src="collection.cover" />
-    <NEllipsis :tooltip="{ placement: 'right' }">
-      <NText class="text-#A2A2A3">
+    <NEllipsis :tooltip="{ placement: 'right', contentClass: 'w-240px' }" class="text-#A2A2A3">
+      <NText>
         {{ collection.title }}
       </NText>
     </NEllipsis>

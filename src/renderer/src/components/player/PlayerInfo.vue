@@ -21,6 +21,8 @@ onMounted(() => {
     if (song)
       playSong(song)
   })
+
+  el.currentTime = playerInfo.value.progress
 })
 
 // 播放状态修改
@@ -37,25 +39,35 @@ onPlayerState((state) => {
   }
 })
 
-watch(() => playerInfo.value.url, (url) => {
+/** 监听播放地址变化 */
+watchEffect(() => {
   const el = videoRef.value
+  const url = playerInfo.value.url
   if (!el || !url)
     return
 
   el.src = url
   el.play()
 })
+
+/** 监听音量变换且同步 */
+watchEffect(() => {
+  const el = videoRef.value
+  if (!el)
+    return
+
+  el.volume = playerInfo.value.volume / 100
+})
 </script>
 
 <template>
-  <div class="py-4 pl-4 box-border overflow-hidden h-80px overflow-hidden grid-(~ cols-[48px_1fr]) gap-3">
-    <!-- <CoverImage size="48px" :src="curPlaySong?.cover ?? Image" /> -->
+  <div class="py-4 pl-4 box-border overflow-hidden h-80px overflow-hidden grid-(~ cols-[48px_1fr]) gap-3 select-none">
     <div class="size-12 pos-relative flex items-center justify-center">
-      <img :src="curPlaySong?.cover ?? Image" class="size-12 aspect-square object-cover rd-1 pos-absolute left-0 top-0 z-0">
+      <CoverImage size="48px" :src="curPlaySong?.cover ?? Image" class="size-12 aspect-square object-cover rd-1 pos-absolute left-0 top-0 z-0" />
       <video ref="videoRef" autoplay class="size-12 aspect-square object-cover rd-1 pos-relative z-1" />
     </div>
     <div class="flex flex-col gap-1">
-      <div>{{ curPlaySong?.name ?? "暂无播放捏~" }}</div>
+      <TextAutoMarquee :key="`${curPlaySong?.bvid}-${curPlaySong?.cid}`" :content="curPlaySong?.name ?? '暂无播放捏~'" />
       <div class="text-#A2A2A3 text-3">
         {{ curPlaySong?.author ?? '无' }}
       </div>
