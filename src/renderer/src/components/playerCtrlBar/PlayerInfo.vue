@@ -62,10 +62,11 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="py-4 pl-4 box-border overflow-hidden h-80px overflow-hidden grid-(~ cols-[48px_1fr]) gap-3 select-none">
-    <div class="size-12 pos-relative flex items-center justify-center">
+  <div class="py-4 pl-4 box-border h-80px grid-(~ cols-[48px_1fr]) gap-3 select-none">
+    <div class="size-12 flex items-center justify-center">
       <CoverImage size="48px" :src="curPlaySong?.cover ?? Image" class="size-12 aspect-square object-cover rd-1 pos-absolute left-0 top-0 z-0" />
-      <video ref="videoRef" autoplay class="size-12 aspect-square object-cover rd-1 pos-relative z-1" />
+      <video ref="videoRef" autoplay class="size-12 aspect-square object-cover rd-1 z-1" />
+      <!-- <video ref="videoRef" autoplay class="rd-2 z-4 pos-absolute top-60px left-50vw w-800px translate-x--50%" /> -->
     </div>
     <div class="flex flex-col gap-1">
       <TextAutoMarquee :key="`${curPlaySong?.bvid}-${curPlaySong?.cid}`" :content="curPlaySong?.name ?? '暂无播放捏~'" />

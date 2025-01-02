@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import type { PlaylistSong } from '@renderer/stores/player'
-import MusicCollectionCtrl from '@renderer/components/MusicCollectionCtrl.vue'
-import SongInfo from '@renderer/components/SongInfo.vue'
-import { formatSeconds } from '@renderer/utils/formatSeconds'
-import { type DataTableColumns, NConfigProvider, NSpin } from 'naive-ui'
+import SongTable from '@renderer/components/songTable'
+import { NSpin } from 'naive-ui'
 
 const props = defineProps<{
   bvid: string
@@ -65,44 +63,6 @@ const { data, error, isLoading } = useQuery({
   },
 })
 
-const columns: DataTableColumns<PlaylistSong> = [
-  {
-    key: 'name',
-    title: '歌名/歌手',
-    render(rowData) {
-      return h(SongInfo, rowData)
-    },
-  },
-  {
-    key: 'part',
-    render(rowData) {
-      return h(MusicCollectionCtrl, {
-        song: rowData,
-      })
-    },
-  },
-  {
-    key: 'lengthTime',
-    title: '时长',
-    render(rowData) {
-      return formatSeconds(rowData.longTime)
-    },
-  },
-]
-
-function rowProps(rowData: PlaylistSong) {
-  let preClickTime = 0
-  return {
-    onClick: () => {
-      if (Date.now() - preClickTime > 200 || preClickTime === 0) {
-        preClickTime = Date.now()
-        return
-      }
-      setPlaySong(rowData)
-    },
-  }
-}
-
 function playCollection() {
   const list = data.value?.list
   if (!list || list.length === 0)
@@ -162,14 +122,6 @@ function onAddCollection() {
                   </template>
                   播放
                 </NButton>
-                <!-- <NButton round size="small" secondary>
-                  <template #icon>
-                    <NIcon size="20">
-                      <div class="i-material-symbols:download-rounded" />
-                    </NIcon>
-                  </template>
-                  下载
-                </NButton> -->
                 <NButton round size="small" secondary @click="onAddCollection">
                   <template #icon>
                     <NIcon size="16">
@@ -182,18 +134,7 @@ function onAddCollection() {
             </div>
           </div>
 
-          <NConfigProvider
-            abstract
-            :theme-overrides="{
-              DataTable: {
-                thColor: 'rgba(0,0,0,0)',
-                tdColor: 'rgba(0,0,0,0)',
-                tdColorHover: '#2f2f30',
-              },
-            }"
-          >
-            <NDataTable class="select-none" :bordered="false" :columns="columns" :data="data?.list ?? []" striped :bottom-bordered="false" :single-column="true" :row-props="rowProps" />
-          </NConfigProvider>
+          <SongTable :data="data?.list ?? []" />
         </template>
       </div>
     </NScrollbar>

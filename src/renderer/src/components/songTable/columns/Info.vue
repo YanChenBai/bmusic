@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import CoverImage from '@renderer/components/CoverImage.vue'
 import { NEllipsis } from 'naive-ui'
-import CoverImage from './CoverImage.vue'
 
 defineProps<{
   name: string

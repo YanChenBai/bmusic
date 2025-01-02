@@ -98,6 +98,7 @@ export const usePlayerStore = defineStore('player', () => {
         curPlaySong.value = song
         playerInfo.url = data.durl[0].url
         playerInfo.longTime = data.timelength / 1000
+        unshiftPlaylist(song)
         playerStateToggle(PlayerStateEnum.PLAY)
       })
   }

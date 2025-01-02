@@ -25,7 +25,7 @@ import { darkTheme, NConfigProvider, zhCN } from 'naive-ui'
     <div class="size-screen grid-(~ rows-[60px_1fr_80px]) overflow-hidden">
       <PlayerHeader />
       <div class="grid-(~ cols-[220px_1fr]) h-full overflow-hidden">
-        <PlayerListSidebar />
+        <PlayerSidebar />
         <div class="overflow-hidden pos-relative h-full overflow-hidden">
           <RouterView v-slot="{ Component, route }">
             <Transition name="fade">
