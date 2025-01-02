@@ -55,18 +55,26 @@ function onBack() {
         </div>
       </div>
 
-      <div class="px-5 flex items-center gap-4">
-        <NButton class="no-drag" circle quaternary :focusable="false" @click="minimize">
+      <div class="px-5 flex items-center gap-0">
+        <NButton class="no-drag" :focusable="false" quaternary @click="$router.push({ name: 'setting' })">
           <template #icon>
-            <NIcon size="42">
+            <NIcon size="20">
+              <div class="i-material-symbols:settings-rounded" />
+            </NIcon>
+          </template>
+        </NButton>
+
+        <NButton class="no-drag" quaternary :focusable="false" @click="minimize">
+          <template #icon>
+            <NIcon size="32">
               <div class="i-material-symbols:check-indeterminate-small-rounded" />
             </NIcon>
           </template>
         </NButton>
 
-        <NButton class="no-drag" circle quaternary :focusable="false" @click="close">
+        <NButton class="no-drag" quaternary :focusable="false" @click="close">
           <template #icon>
-            <NIcon size="42">
+            <NIcon size="32">
               <div class="i-material-symbols:close-small-rounded" />
             </NIcon>
           </template>

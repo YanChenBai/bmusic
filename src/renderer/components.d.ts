@@ -7,18 +7,15 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AutoMarquee: typeof import('./src/components/TextAutoMarquee.vue')['default']
     CoverImage: typeof import('./src/components/CoverImage.vue')['default']
     MusicCollection: typeof import('./src/components/MusicCollection.vue')['default']
     MusicCollectionCtrl: typeof import('./src/components/MusicCollectionCtrl.vue')['default']
-    NAvatar: typeof import('naive-ui')['NAvatar']
     NBadge: typeof import('naive-ui')['NBadge']
     NButton: typeof import('naive-ui')['NButton']
     NCard: typeof import('naive-ui')['NCard']
     NCheckbox: typeof import('naive-ui')['NCheckbox']
     NCheckboxGroup: typeof import('naive-ui')['NCheckboxGroup']
     NDataTable: typeof import('naive-ui')['NDataTable']
-    NDivider: typeof import('naive-ui')['NDivider']
     NDrawer: typeof import('naive-ui')['NDrawer']
     NDrawerContent: typeof import('naive-ui')['NDrawerContent']
     NEllipsis: typeof import('naive-ui')['NEllipsis']
@@ -46,6 +43,5 @@ declare module 'vue' {
     SongInfo: typeof import('./src/components/SongInfo.vue')['default']
     TextAutoMarquee: typeof import('./src/components/TextAutoMarquee.vue')['default']
     TextLoadPlaceholder: typeof import('./src/components/TextLoadPlaceholder.vue')['default']
-    Versions: typeof import('./src/components/Versions.vue')['default']
   }
 }
