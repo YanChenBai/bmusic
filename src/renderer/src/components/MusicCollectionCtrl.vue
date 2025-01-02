@@ -5,10 +5,10 @@ const props = defineProps<{
   song: PlaylistSong
 }>()
 
-const { addPlaylist } = usePlayer()
+const { pushPlaylist } = usePlayerStore()
 
 function onClick() {
-  addPlaylist(props.song)
+  pushPlaylist(props.song)
 }
 </script>
 

@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { usePlayerStoreRefs } from '@renderer/stores/player'
+
 const [drawerState, drawerToggle] = useToggle(false)
 const [checkboxState, checkboxToggle] = useToggle(false)
-const { playlist, delPlaylist } = usePlayer()
+const { playlist } = usePlayerStoreRefs()
+const { delPlaylist } = usePlayerStore()
 const selectedSongs = ref<string[]>([])
 const isSelectedAll = ref(false)
 
@@ -27,7 +30,7 @@ function batchDel() {
 
   selectedSongs.value.forEach((v) => {
     const [bvid, cid] = v.split(':')
-    delPlaylist({ bvid, cid: Number(cid) })
+    delPlaylist(bvid, Number(cid))
   })
 
   selectedSongs.value = []
@@ -109,7 +112,7 @@ watchEffect(() => {
                 </div>
               </div>
               <div class="pos-absolute right-2 top-0 h-full group-hover:flex items-center hidden">
-                <NButton circle secondary @click.stop="() => delPlaylist(item)">
+                <NButton circle secondary @click.stop="() => delPlaylist(item.bvid, item.cid)">
                   <template #icon>
                     <NIcon>
                       <div class="i-material-symbols:delete-rounded" />

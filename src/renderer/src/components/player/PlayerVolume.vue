@@ -1,5 +1,8 @@
 <script setup lang="ts">
-const { playerInfo, modifyVolume } = usePlayer()
+import { usePlayerStoreRefs } from '@renderer/stores/player'
+
+const { playerInfo } = usePlayerStoreRefs()
+const { modifyVolume } = usePlayerStore()
 
 function handleWheel(payload: WheelEvent) {
   const delta = payload.deltaY > 0 ? -1 : 1

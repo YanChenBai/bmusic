@@ -1,26 +1,28 @@
 <script setup lang="ts">
-import { PlayerStateEnum } from '@renderer/stores/player'
+import { PlayerStateEnum, usePlayerCtrl, usePlayerStoreRefs } from '@renderer/stores/player'
 import { formatSeconds } from '@renderer/utils/formatSeconds'
 
-const { playerInfo, pause, play } = usePlayer()
+// const { setStateToPause, set } = usePlayerStore()
+const { playerInfo } = usePlayerStoreRefs()
+const playerCtrl = usePlayerCtrl()
 
 const playTime = computed(() => formatSeconds(playerInfo.value.progress))
 const longTime = computed(() => formatSeconds(playerInfo.value.longTime))
 
 function playOrPause() {
-  if (playerInfo.value.state === PlayerStateEnum.PLAY) {
-    pause()
-  }
-  else {
-    play()
-  }
+  // if (playerInfo.value.state === PlayerStateEnum.PLAY) {
+  //   pause()
+  // }
+  // else {
+  //   play()
+  // }
 }
 </script>
 
 <template>
   <div class="flex flex-col items-center box-border px15 pt-3 w-full select-none">
     <div class="flex gap-2 items-center">
-      <NButton quaternary circle>
+      <NButton quaternary circle @click="() => playerCtrl.prev()">
         <template #icon>
           <NIcon :size="26">
             <div class="i-material-symbols:skip-previous-rounded" />
@@ -35,7 +37,7 @@ function playOrPause() {
           </NIcon>
         </template>
       </NButton>
-      <NButton quaternary circle>
+      <NButton quaternary circle @click="() => playerCtrl.next()">
         <template #icon>
           <NIcon :size="26">
             <div class="i-material-symbols:skip-next-rounded" />
