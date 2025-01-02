@@ -26,6 +26,7 @@
     "@byc/tipc": "^1.0.1",
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
+    "@iconify-json/svg-spinners": "^1.2.2",
     "@pinia/colada": "^0.13.1",
     "@types/howler": "^2.2.12",
     "@vueuse/core": "^12.2.0",

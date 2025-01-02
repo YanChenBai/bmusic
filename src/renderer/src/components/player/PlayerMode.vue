@@ -23,9 +23,9 @@ const curModelTitle = computed(() => options.find(item => item.value === playerI
 </script>
 
 <template>
-  <n-popselect v-model:value="playerInfo.mode" :options="options" trigger="click">
-    <n-button>{{ curModelTitle }}</n-button>
-  </n-popselect>
+  <NPopselect v-model:value="playerInfo.mode" :options="options" trigger="click">
+    <NButton>{{ curModelTitle }}</NButton>
+  </NPopselect>
 </template>
 
 <style scoped>

@@ -101,7 +101,12 @@ watchEffect(() => {
               @click="handleClick"
             >
               <NCheckbox v-show="checkboxState" size="small" :value="`${item.bvid}:${item.cid}`" @click.stop />
-              <CoverImage :src="item.cover" size="36px" class="flex-shrink-0" />
+              <div class="flex-shrink-0 pos-relative">
+                <div class="pos-absolute size-36px flex justify-center items-center rd-1 bg-#000/20">
+                  <div class="i-svg-spinners:bars-scale-fade size-4 text-#FF6699" />
+                </div>
+                <CoverImage :src="item.cover" size="36px" />
+              </div>
               <div class="flex flex-col overflow-hidden pr2 box-border select-none">
                 <NEllipsis
                   :tooltip="{ placement: 'bottom' }"

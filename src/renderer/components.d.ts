@@ -32,6 +32,7 @@ declare module 'vue' {
     NSkeleton: typeof import('naive-ui')['NSkeleton']
     NSlider: typeof import('naive-ui')['NSlider']
     NText: typeof import('naive-ui')['NText']
+    NTooltip: typeof import('naive-ui')['NTooltip']
     PlayerCtrl: typeof import('./src/components/player/PlayerCtrl.vue')['default']
     PlayerCtrlBar: typeof import('./src/components/layouts/PlayerCtrlBar.vue')['default']
     PlayerHeader: typeof import('./src/components/layouts/PlayerHeader.vue')['default']

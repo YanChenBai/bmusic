@@ -11,20 +11,25 @@ function handleWheel(payload: WheelEvent) {
 </script>
 
 <template>
-  <NPopover :show-arrow="false" trigger="click">
+  <NTooltip>
     <template #trigger>
-      <NButton>
-        <template #icon>
-          <NIcon size="22">
-            <div v-if="playerInfo.volume === 0" class="i-material-symbols:volume-mute-rounded" />
-            <div v-else class="i-material-symbols:volume-up-rounded" />
-          </NIcon>
+      <NPopover :show-arrow="false" trigger="click">
+        <template #trigger>
+          <NButton>
+            <template #icon>
+              <NIcon size="22">
+                <div v-if="playerInfo.volume === 0" class="i-material-symbols:volume-mute-rounded" />
+                <div v-else class="i-material-symbols:volume-up-rounded" />
+              </NIcon>
+            </template>
+          </NButton>
         </template>
-      </NButton>
+        <div class="h-50 w-7 grid-(~ rows-[1fr_20px]) gap-2 select-none text-center" @wheel="handleWheel">
+          <NSlider v-model:value="playerInfo.volume" :tooltip="false" vertical class="m-a" />
+          <NText>{{ playerInfo.volume }}</NText>
+        </div>
+      </NPopover>
     </template>
-    <div class="h-50 w-7 grid-(~ rows-[1fr_20px]) gap-2 select-none text-center" @wheel="handleWheel">
-      <NSlider v-model:value="playerInfo.volume" :tooltip="false" vertical class="m-a" />
-      <NText>{{ playerInfo.volume }}</NText>
-    </div>
-  </NPopover>
+    <NText>{{ playerInfo.volume }}</NText>
+  </NTooltip>
 </template>
