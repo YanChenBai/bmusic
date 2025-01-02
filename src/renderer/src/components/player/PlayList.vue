@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { usePlayerStoreRefs } from '@renderer/stores/player'
-
 const [drawerState, drawerToggle] = useToggle(false)
 const [checkboxState, checkboxToggle] = useToggle(false)
 const { playlist } = usePlayerStoreRefs()
+const { isCurPlaySong } = usePlayerStore()
 const { delPlaylist } = usePlayerStore()
 const selectedSongs = ref<string[]>([])
 const isSelectedAll = ref(false)
@@ -104,7 +103,12 @@ watchEffect(() => {
               <NCheckbox v-show="checkboxState" size="small" :value="`${item.bvid}:${item.cid}`" @click.stop />
               <CoverImage :src="item.cover" size="36px" class="flex-shrink-0" />
               <div class="flex flex-col overflow-hidden pr2 box-border select-none">
-                <NEllipsis :tooltip="{ placement: 'bottom' }">
+                <NEllipsis
+                  :tooltip="{ placement: 'bottom' }"
+                  :class="{
+                    ['text-#FF6699']: isCurPlaySong(item),
+                  }"
+                >
                   {{ item.name }}
                 </NEllipsis>
                 <div class="text-(3 #A5A5A5)">

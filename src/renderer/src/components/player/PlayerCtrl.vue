@@ -2,21 +2,12 @@
 import { PlayerStateEnum, usePlayerCtrl, usePlayerStoreRefs } from '@renderer/stores/player'
 import { formatSeconds } from '@renderer/utils/formatSeconds'
 
-// const { setStateToPause, set } = usePlayerStore()
+const { playerStateToggle } = usePlayerStore()
 const { playerInfo } = usePlayerStoreRefs()
 const playerCtrl = usePlayerCtrl()
 
 const playTime = computed(() => formatSeconds(playerInfo.value.progress))
 const longTime = computed(() => formatSeconds(playerInfo.value.longTime))
-
-function playOrPause() {
-  // if (playerInfo.value.state === PlayerStateEnum.PLAY) {
-  //   pause()
-  // }
-  // else {
-  //   play()
-  // }
-}
 </script>
 
 <template>
@@ -29,7 +20,7 @@ function playOrPause() {
           </NIcon>
         </template>
       </NButton>
-      <NButton circle type="primary" class="size-7.5" @click="playOrPause">
+      <NButton circle type="primary" class="size-7.5" @click="() => playerStateToggle()">
         <template #icon>
           <NIcon :size="24">
             <div v-if="playerInfo.state === PlayerStateEnum.PLAY" class="i-material-symbols:pause-rounded" />

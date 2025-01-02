@@ -3,7 +3,9 @@ import Image from '@renderer/assets/imgs/cover.jpg'
 import { usePlayerStoreRefs } from '@renderer/stores/player'
 
 const videoRef = useTemplateRef('videoRef')
-const { curPlaySong, playerInfo, playlist } = usePlayerStoreRefs()
+const { curPlaySong, playerInfo } = usePlayerStoreRefs()
+const { onPlayerState } = usePlayerStore()
+const playerCtrl = usePlayerCtrl()
 
 onMounted(() => {
   const el = videoRef.value
@@ -18,27 +20,25 @@ onMounted(() => {
   el.addEventListener('play', () => playerInfo.value.state = PlayerStateEnum.PLAY)
 
   el.addEventListener('ended', () => {
-    // const song = playlist.value.shift()
-    // if (song)
-    // playSong(song)
+    playerCtrl.value.autoNext()
   })
 
   el.currentTime = playerInfo.value.progress
 })
 
 // 播放状态修改
-// onPlayerState((state) => {
-//   const el = videoRef.value
-//   if (!el)
-//     return
+onPlayerState((state) => {
+  const el = videoRef.value
+  if (!el)
+    return
 
-//   if (state === PlayerStateEnum.PLAY) {
-//     el.play()
-//   }
-//   else if (state === PlayerStateEnum.PAUSE) {
-//     el.pause()
-//   }
-// })
+  if (state === PlayerStateEnum.PLAY) {
+    el.play()
+  }
+  else if (state === PlayerStateEnum.PAUSE) {
+    el.pause()
+  }
+})
 
 /** 监听播放地址变化 */
 watchEffect(() => {

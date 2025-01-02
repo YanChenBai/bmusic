@@ -9,7 +9,7 @@ const props = defineProps<{
   bvid: string
 }>()
 
-const { setPlaySong } = usePlayerStore()
+const { setPlaySong, pushPlaylist } = usePlayerStore()
 const { addCollection } = useCollection()
 
 const { data, error, isLoading } = useQuery({
@@ -96,6 +96,7 @@ function rowProps(rowData: PlaylistSong) {
     onClick: () => {
       if (Date.now() - preClickTime > 200 || preClickTime === 0) {
         preClickTime = Date.now()
+        return
       }
       setPlaySong(rowData)
     },
@@ -107,7 +108,7 @@ function playCollection() {
   if (!list || list.length === 0)
     return
 
-  // addListToPlaylist(list)
+  list.forEach(item => pushPlaylist(item))
   setPlaySong(list[0])
 }
 

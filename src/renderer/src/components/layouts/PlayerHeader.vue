@@ -55,7 +55,7 @@ function onBack() {
         </div>
       </div>
 
-      <div class="px-5 flex items-center gap-0">
+      <div class="px-3 flex items-center gap-0">
         <NButton class="no-drag" :focusable="false" quaternary @click="$router.push({ name: 'setting' })">
           <template #icon>
             <NIcon size="20">

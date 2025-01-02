@@ -1,4 +1,3 @@
-import type { Ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export enum PlayerModeEnum {
@@ -38,6 +37,7 @@ export interface PlayerInfo {
 }
 
 export const usePlayerStore = defineStore('player', () => {
+  const { on: onPlayerState, trigger: playerStateTrigger } = createEventHook<PlayerStateEnum>()
   const curPlaySong = ref<PlaylistSong>()
   const playlist = ref<PlaylistSong[]>([])
   const playerInfo = reactive<PlayerInfo>({
@@ -48,6 +48,7 @@ export const usePlayerStore = defineStore('player', () => {
     state: PlayerStateEnum.PAUSE,
     longTime: 0,
   })
+  const playlistSet = computed(() => new Set(playlist.value.map(i => `${i.bvid}:${i.cid}`)))
 
   function delPlaylist(bvid: string, cid: number) {
     const index = playlist.value.findIndex(i => i.bvid === bvid && i.cid === cid)
@@ -70,12 +71,21 @@ export const usePlayerStore = defineStore('player', () => {
     playlist.value.unshift(data)
   }
 
-  function setStateToPlay() {
-    playerInfo.state = PlayerStateEnum.PLAY
-  }
+  function playerStateToggle(state?: PlayerStateEnum) {
+    if (state !== undefined) {
+      playerInfo.state = state
+      playerStateTrigger(PlayerStateEnum.PAUSE)
+      return
+    }
 
-  function setStateToPause() {
-    playerInfo.state = PlayerStateEnum.PAUSE
+    if (playerInfo.state === PlayerStateEnum.PLAY) {
+      playerInfo.state = PlayerStateEnum.PAUSE
+      playerStateTrigger(PlayerStateEnum.PAUSE)
+    }
+    else {
+      playerInfo.state = PlayerStateEnum.PLAY
+      playerStateTrigger(PlayerStateEnum.PLAY)
+    }
   }
 
   function setPlaySong(song: PlaylistSong) {
@@ -88,7 +98,7 @@ export const usePlayerStore = defineStore('player', () => {
         curPlaySong.value = song
         playerInfo.url = data.durl[0].url
         playerInfo.longTime = data.timelength / 1000
-        setStateToPlay()
+        playerStateToggle(PlayerStateEnum.PLAY)
       })
   }
 
@@ -103,17 +113,29 @@ export const usePlayerStore = defineStore('player', () => {
     return playlist.value.findIndex(i => i.bvid === song.bvid && i.cid === song.cid)
   }
 
+  function hasPlaylist(song: PlaylistSong) {
+    return playlistSet.value.has(`${song.bvid}:${song.cid}`)
+  }
+
+  function isCurPlaySong(song: PlaylistSong) {
+    return curPlaySong.value?.bvid === song.bvid && curPlaySong.value?.cid === song.cid
+  }
+
   return {
     playlist,
     playerInfo,
     curPlaySong,
     unshiftPlaylist,
     pushPlaylist,
-    setStateToPause,
     setPlaySong,
     delPlaylist,
     modifyVolume,
     curPlaySongIndex,
+    hasPlaylist,
+    isCurPlaySong,
+    playerStateTrigger,
+    onPlayerState,
+    playerStateToggle,
   }
 }, {
   persist: {
@@ -135,20 +157,11 @@ abstract class PlayerMode {
   constructor(protected store: ReturnType<typeof usePlayerStore>) {}
 
   abstract autoNext(): void
-  abstract autoPrev(): void
-  abstract next(): void
-  abstract prev(): void
-}
 
-class PlayerListLoop extends PlayerMode {
   next(): void {
     const currentIndex = this.store.curPlaySongIndex()
     const nextIndex = currentIndex === this.store.playlist.length - 1 ? 0 : currentIndex + 1
     this.store.setPlaySong(this.store.playlist[nextIndex])
-  }
-
-  autoNext() {
-    this.next()
   }
 
   prev(): void {
@@ -156,9 +169,44 @@ class PlayerListLoop extends PlayerMode {
     const prevIndex = currentIndex <= 0 ? this.store.playlist.length - 1 : currentIndex - 1
     this.store.setPlaySong(this.store.playlist[prevIndex])
   }
+}
 
-  autoPrev() {
-    this.prev()
+class PlayerListLoop extends PlayerMode {
+  autoNext() {
+    this.next()
+  }
+}
+
+class PlayerSingleLoop extends PlayerMode {
+  autoNext() {
+    const song = this.store.curPlaySong
+    if (!song)
+      return
+    this.store.setPlaySong(song)
+  }
+}
+
+class PlayerLinear extends PlayerMode {
+  autoNext() {
+    const currentIndex = this.store.curPlaySongIndex()
+    const isLast = currentIndex === this.store.playlist.length - 1
+    if (!isLast)
+      this.next()
+  }
+}
+
+class PlayerRandom extends PlayerMode {
+  next() {
+    const currentIndex = this.store.curPlaySongIndex()
+    const randomIndex = Math.floor(Math.random() * this.store.playlist.length)
+    if (randomIndex === currentIndex)
+      this.next()
+    else
+      this.store.setPlaySong(this.store.playlist[randomIndex])
+  }
+
+  autoNext() {
+    this.next()
   }
 }
 
@@ -167,10 +215,10 @@ export function usePlayerCtrl() {
   const { playerInfo } = usePlayerStoreRefs()
 
   const modeInstances = {
-    [PlayerModeEnum.LINEAR]: new PlayerListLoop(store),
-    // [PlayerModeEnum.SINGLE_LOOP]: new PlayerSingleLoop(store),
-    // [PlayerModeEnum.LINEAR]: new PlayerLinear(store),
-    // [PlayerModeEnum.RANDOM]: new PlayerRandom(store),
+    [PlayerModeEnum.LIST_LOOP]: new PlayerListLoop(store),
+    [PlayerModeEnum.SINGLE_LOOP]: new PlayerSingleLoop(store),
+    [PlayerModeEnum.LINEAR]: new PlayerLinear(store),
+    [PlayerModeEnum.RANDOM]: new PlayerRandom(store),
   }
 
   function createModeInstance(mode: PlayerModeEnum): PlayerMode {

@@ -6,6 +6,7 @@
     <PlayerInfo />
     <PlayerCtrl />
     <div class="size-full items-center flex justify-end gap-3">
+      <PlayerMode />
       <PlayerVolume />
       <PlayList />
     </div>

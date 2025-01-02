@@ -22,11 +22,11 @@ import { darkTheme, NConfigProvider, zhCN } from 'naive-ui'
       },
     }"
   >
-    <div class="size-screen grid-(~ rows-[60px_1fr_80px]) overflow-hidden pos-relative">
+    <div class="size-screen grid-(~ rows-[60px_1fr_80px]) overflow-hidden">
       <PlayerHeader />
-      <div class="grid-(~ cols-[220px_1fr]) h-full overflow-hidden">
+      <div class="grid-(~ cols-[220px_1fr]) h-full">
         <PlayerListSidebar />
-        <div>
+        <div class="overflow-hidden pos-relative h-[calc(100vh-80px-60px)]">
           <RouterView v-slot="{ Component, route }">
             <Transition name="fade">
               <KeepAlive>
@@ -52,7 +52,7 @@ import { darkTheme, NConfigProvider, zhCN } from 'naive-ui'
 /* 可能为enter失效，拆分为 enter-from和enter-to */
 .fade-enter-from {
   opacity: 0;
-  transform: translateX(-10px);
+  transform: translateX(-8px);
 }
 .fade-enter-to {
   opacity: 1;
@@ -61,7 +61,7 @@ import { darkTheme, NConfigProvider, zhCN } from 'naive-ui'
 
 .fade-leave-to {
   opacity: 0;
-  transform: translateX(10px);
+  transform: translateX(8px);
   position: absolute;
 }
 </style>
