@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PlaylistSong } from '@renderer/stores/player'
 import type { DataTableColumns } from 'naive-ui'
+import type { HTMLAttributes } from 'vue'
 import CtrlCol from './columns/Ctrl.vue'
 import InfoCol from './columns/Info.vue'
 
@@ -36,16 +37,9 @@ const columns: DataTableColumns<PlaylistSong> = [
 ]
 
 function rowProps(song: PlaylistSong) {
-  let preClickTime = 0
   return {
-    onClick: () => {
-      if (Date.now() - preClickTime > 200 || preClickTime === 0) {
-        preClickTime = Date.now()
-        return
-      }
-      setPlaySong(song)
-    },
-  }
+    onDblclick: () => setPlaySong(song),
+  } as HTMLAttributes
 }
 </script>
 

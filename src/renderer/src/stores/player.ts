@@ -57,6 +57,7 @@ export const usePlayerStore = defineStore('player', () => {
     playlist.value.splice(index, 1)
   }
 
+  /** 播放列表末尾插入 */
   function pushPlaylist(data: PlaylistSong) {
     if (playlist.value.some(i => i.bvid === data.bvid && i.cid === data.cid)) {
       return
@@ -64,6 +65,7 @@ export const usePlayerStore = defineStore('player', () => {
     playlist.value.push(data)
   }
 
+  /** 播放列表头部插入 */
   function unshiftPlaylist(data: PlaylistSong) {
     if (playlist.value.some(i => i.bvid === data.bvid && i.cid === data.cid)) {
       return
@@ -71,6 +73,7 @@ export const usePlayerStore = defineStore('player', () => {
     playlist.value.unshift(data)
   }
 
+  /** 切换播放状态值 */
   function playerStateToggle(state?: PlayerStateEnum) {
     if (state !== undefined) {
       playerInfo.state = state
@@ -88,6 +91,7 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
+  /** 设置播放歌曲 */
   function setPlaySong(song: PlaylistSong) {
     window.invokes.getMediaInfo(song.bvid, song.cid)
       .then(({ data, code, message: msg }) => {
@@ -101,12 +105,17 @@ export const usePlayerStore = defineStore('player', () => {
         unshiftPlaylist(song)
         playerStateToggle(PlayerStateEnum.PLAY)
       })
+      .catch((err) => {
+        message.error(err.message)
+      })
   }
 
+  /** 修改音量 */
   function modifyVolume(value: number) {
     playerInfo.volume = Math.max(0, Math.min(100, value))
   }
 
+  /** 当前播放歌曲在播放列表中的索引 */
   function curPlaySongIndex() {
     const song = curPlaySong.value
     if (!song)
@@ -114,10 +123,16 @@ export const usePlayerStore = defineStore('player', () => {
     return playlist.value.findIndex(i => i.bvid === song.bvid && i.cid === song.cid)
   }
 
+  function cleatPlaylist() {
+    playlist.value = []
+  }
+
+  /** 是否在播放列表中 */
   function hasPlaylist(song: PlaylistSong) {
     return playlistSet.value.has(`${song.bvid}:${song.cid}`)
   }
 
+  /** 检查传入的歌曲是否为当前播放歌曲 */
   function isCurPlaySong(song: PlaylistSong) {
     return curPlaySong.value?.bvid === song.bvid && curPlaySong.value?.cid === song.cid
   }
@@ -137,6 +152,7 @@ export const usePlayerStore = defineStore('player', () => {
     playerStateTrigger,
     onPlayerState,
     playerStateToggle,
+    cleatPlaylist,
   }
 }, {
   persist: {
@@ -172,12 +188,14 @@ abstract class PlayerMode {
   }
 }
 
+/** 列表循环 */
 class PlayerListLoop extends PlayerMode {
   autoNext() {
     this.next()
   }
 }
 
+/** 单曲循环 */
 class PlayerSingleLoop extends PlayerMode {
   autoNext() {
     const song = this.store.curPlaySong
@@ -187,6 +205,7 @@ class PlayerSingleLoop extends PlayerMode {
   }
 }
 
+/** 顺序播放 */
 class PlayerLinear extends PlayerMode {
   autoNext() {
     const currentIndex = this.store.curPlaySongIndex()
@@ -196,14 +215,11 @@ class PlayerLinear extends PlayerMode {
   }
 }
 
+/** 随机播放 */
 class PlayerRandom extends PlayerMode {
   next() {
-    const currentIndex = this.store.curPlaySongIndex()
     const randomIndex = Math.floor(Math.random() * this.store.playlist.length)
-    if (randomIndex === currentIndex)
-      this.next()
-    else
-      this.store.setPlaySong(this.store.playlist[randomIndex])
+    this.store.setPlaySong(this.store.playlist[randomIndex])
   }
 
   autoNext() {
@@ -211,26 +227,39 @@ class PlayerRandom extends PlayerMode {
   }
 }
 
-export function usePlayerCtrl() {
+export const usePlayerCtrl = createSharedComposable(() => {
   const store = usePlayerStore()
   const { playerInfo } = usePlayerStoreRefs()
 
-  const modeInstances = {
+  const instances = {
     [PlayerModeEnum.LIST_LOOP]: new PlayerListLoop(store),
     [PlayerModeEnum.SINGLE_LOOP]: new PlayerSingleLoop(store),
     [PlayerModeEnum.LINEAR]: new PlayerLinear(store),
     [PlayerModeEnum.RANDOM]: new PlayerRandom(store),
   }
 
-  function createModeInstance(mode: PlayerModeEnum): PlayerMode {
-    const instance = modeInstances[mode]
-    if (!instance) {
-      throw new Error(`Unknown player mode: ${mode}`)
-    }
+  const mode = computed(() => playerInfo.value.mode ?? PlayerModeEnum.LIST_LOOP)
+
+  const instance = computed(() => {
+    const instance = instances[mode.value]
+
+    if (!instance)
+      throw new Error(`Unknown player mode: ${mode.value}`)
+
     return instance
+  })
+
+  const playerCtrl: Omit<PlayerMode, 'store'> = {
+    next() {
+      instance.value.next()
+    },
+    prev() {
+      instance.value.prev()
+    },
+    autoNext() {
+      instance.value.autoNext()
+    },
   }
 
-  const instance = computed(() => createModeInstance(playerInfo.value.mode))
-
-  return instance
-}
+  return playerCtrl
+})

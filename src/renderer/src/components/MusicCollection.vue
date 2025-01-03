@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CollectionItem } from '@renderer/stores/collection'
+import type { CollectionItem } from '@renderer/utils/songDB'
 import { NEllipsis, NText } from 'naive-ui'
 
 defineProps<{

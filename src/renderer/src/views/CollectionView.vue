@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PlaylistSong } from '@renderer/stores/player'
 import SongTable from '@renderer/components/songTable'
+import { useDB } from '@renderer/stores/db'
 import { NSpin } from 'naive-ui'
 
 const props = defineProps<{
@@ -8,7 +9,7 @@ const props = defineProps<{
 }>()
 
 const { setPlaySong, pushPlaylist } = usePlayerStore()
-const { addCollection } = useCollection()
+const { addCollection } = useDB()
 
 const { data, error, isLoading } = useQuery({
   key: () => ['getPlayerData', props.bvid],
@@ -85,10 +86,10 @@ function onAddCollection() {
   <NSpin :show="isLoading">
     <NScrollbar class="h-[calc(100vh-80px-60px)]">
       <div class="p-4 box-border grid gap-4">
-        <NResult v-if="error" status="404" title="请求错误" description="生活总归带点荒谬" />
+        <NResult v-if="error" status="404" title="请求错误" description="生活总归带点荒谬" class="mt-30" />
         <template v-else>
           <div class="grid-(~ cols-[128px_1fr]) gap-4">
-            <CoverImage size="128px" class="rd-2" :src="data?.cover" />
+            <CoverImage size="128px" class="rd-2" :src="data?.cover" :preview="true" />
             <div flex flex-col>
               <div class="flex flex-col gap-1">
                 <TextLoadPlaceholder :loading="isLoading" skeleton-class="max-w-360px">
@@ -137,6 +138,7 @@ function onAddCollection() {
           <SongTable :data="data?.list ?? []" />
         </template>
       </div>
+      <NBackTop :bottom="100" :right="10" />
     </NScrollbar>
   </NSpin>
 </template>

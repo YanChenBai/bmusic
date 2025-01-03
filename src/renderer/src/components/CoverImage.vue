@@ -1,18 +1,24 @@
 <script setup lang="ts">
-const props = defineProps<{
+withDefaults(defineProps<{
   src?: string
   size: string
-}>()
-
-const _src = computed(() => {
-  if (props.src && props.src?.length > 0)
-    return props.src
-  return undefined
+  preview?: boolean
+}>(), {
+  preview: false,
 })
 </script>
 
 <template>
-  <NImage :preview-disabled="true" :width="size" :height="size" class="rd-1 select-none" :src="_src" object-fit="cover">
+  <NImage
+    class="rd-1 select-none"
+    object-fit="cover"
+    :preview-disabled="!preview"
+    :width="size"
+    :height="size"
+    :src="src"
+    :previewed-img-props="{ class: 'max-w-500px rd-2' }"
+    :show-toolbar="false"
+  >
     <template #placeholder>
       <NSkeleton :height="size" :width="size" class="rd-1" />
     </template>

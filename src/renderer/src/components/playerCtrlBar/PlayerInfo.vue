@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import Image from '@renderer/assets/imgs/cover.jpg'
 import { usePlayerStoreRefs } from '@renderer/stores/player'
 
 const videoRef = useTemplateRef('videoRef')
 const { curPlaySong, playerInfo } = usePlayerStoreRefs()
 const { onPlayerState } = usePlayerStore()
 const playerCtrl = usePlayerCtrl()
+const loading = ref(true)
 
 onMounted(() => {
   const el = videoRef.value
   if (!el)
     return
+
+  el.currentTime = playerInfo.value.progress
 
   el.addEventListener('timeupdate', () => {
     playerInfo.value.progress = el.currentTime
@@ -20,10 +22,11 @@ onMounted(() => {
   el.addEventListener('play', () => playerInfo.value.state = PlayerStateEnum.PLAY)
 
   el.addEventListener('ended', () => {
-    playerCtrl.value.autoNext()
+    playerCtrl.autoNext()
   })
 
-  el.currentTime = playerInfo.value.progress
+  el.addEventListener('loadstart', () => loading.value = true)
+  el.addEventListener('loadeddata', () => loading.value = false)
 })
 
 // 播放状态修改
@@ -32,11 +35,15 @@ onPlayerState((state) => {
   if (!el)
     return
 
-  if (state === PlayerStateEnum.PLAY) {
-    el.play()
-  }
-  else if (state === PlayerStateEnum.PAUSE) {
-    el.pause()
+  switch (state) {
+    case PlayerStateEnum.PLAY:
+      el.play()
+      break
+    case PlayerStateEnum.PAUSE:
+      el.pause()
+      break
+    default:
+      break
   }
 })
 
@@ -64,9 +71,8 @@ watchEffect(() => {
 <template>
   <div class="py-4 pl-4 box-border h-80px grid-(~ cols-[48px_1fr]) gap-3 select-none">
     <div class="size-12 flex items-center justify-center">
-      <CoverImage size="48px" :src="curPlaySong?.cover ?? Image" class="size-12 aspect-square object-cover rd-1 pos-absolute left-0 top-0 z-0" />
-      <video ref="videoRef" autoplay class="size-12 aspect-square object-cover rd-1 z-1" />
-      <!-- <video ref="videoRef" autoplay class="rd-2 z-4 pos-absolute top-60px left-50vw w-800px translate-x--50%" /> -->
+      <video v-show="!loading" ref="videoRef" autoplay class="w-12 aspect-square object-cover rd-1 z-1" />
+      <CoverImage v-show="loading" size="48px" :src="curPlaySong?.cover" class="aspect-square object-cover rd-1" />
     </div>
     <div class="flex flex-col gap-1">
       <TextAutoMarquee :key="`${curPlaySong?.bvid}-${curPlaySong?.cid}`" :content="curPlaySong?.name ?? '暂无播放捏~'" />
@@ -76,7 +82,3 @@ watchEffect(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-
-</style>

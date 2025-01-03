@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { PlaylistSong } from '@renderer/stores/player'
+
 const [drawerState, drawerToggle] = useToggle(false)
 const [checkboxState, checkboxToggle] = useToggle(false)
 const { playlist } = usePlayerStoreRefs()
-const { isCurPlaySong } = usePlayerStore()
-const { delPlaylist } = usePlayerStore()
+const { isCurPlaySong, delPlaylist, setPlaySong } = usePlayerStore()
 const selectedSongs = ref<string[]>([])
 const isSelectedAll = ref(false)
 
@@ -33,6 +34,13 @@ function batchDel() {
   })
 
   selectedSongs.value = []
+}
+
+function platSong(song: PlaylistSong) {
+  // 多选开启不播放
+  if (checkboxState.value)
+    return
+  setPlaySong(song)
 }
 
 // 监听是否开启多选
@@ -86,19 +94,20 @@ watchEffect(() => {
           </div>
         </template>
 
-        <NScrollbar class="px3 box-border pos-relative">
+        <NScrollbar class="px3 box-border pos-relative" content-class="pb-3">
           <div v-show="checkboxState" class="pt-2 pl2">
             <!-- <NCheckbox v-model:checked="isSelectedAll" size="small" label="全选" />
             <NDivider vertical /> -->
             已选中{{ selectedSongs.length }}首
           </div>
-          <NCheckboxGroup v-if="playlist.length" v-model:value="selectedSongs" class="mb3">
+          <NCheckboxGroup v-if="playlist.length" v-model:value="selectedSongs">
             <div
               v-for="item in playlist"
               :key="`${item.bvid}-${item.cid}`"
               checkbox
               class="flex items-center gap-2 bg pos-relative group overflow-hidden"
               @click="handleClick"
+              @dblclick.stop="() => platSong(item)"
             >
               <NCheckbox v-show="checkboxState" size="small" :value="`${item.bvid}:${item.cid}`" @click.stop />
               <div class="flex-shrink-0 pos-relative size-36px">
@@ -131,7 +140,6 @@ watchEffect(() => {
               </div>
             </div>
           </NCheckboxGroup>
-
           <NResult v-else class="mt-10" status="404" title="歌单是空的哦~" description="找点对胃口的歌吧~" />
         </NScrollbar>
       </NDrawerContent>

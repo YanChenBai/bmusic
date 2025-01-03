@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const { collections } = useCollection()
+import { useDB } from '@renderer/stores/db'
+
+const { collections } = useDB()
 </script>
 
 <template>
