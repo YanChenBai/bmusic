@@ -5,16 +5,20 @@ import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, shell } from 'electron'
 import icon from '../../resources/icon.png?asset'
 import { MainHandler } from './handlers/main'
+import { getPort } from './utils/getPort'
+import { startProxyServer } from './utils/proxyServer'
 
-function createWindow(): void {
+async function createWindow() {
+  startProxyServer(await getPort())
   registerHandler(MainHandler)
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1100,
-    height: 670,
+    width: 1000,
+    height: 600,
     show: false,
-    resizable: false,
+    minHeight: 600,
+    minWidth: 900,
     frame: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -23,6 +27,8 @@ function createWindow(): void {
       sandbox: false,
     },
   })
+
+  mainWindow.setAlwaysOnTop(true, 'screen-saver')
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -39,7 +45,7 @@ function createWindow(): void {
     mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL)
   }
   else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    mainWindow.loadFile(`${join(__dirname, '../renderer/index.html')}`)
   }
 }
 

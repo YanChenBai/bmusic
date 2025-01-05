@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: bmusic-electron
+appId: com.bmusic.app
+productName: bmusic
 directories:
   buildResources: build
 files:

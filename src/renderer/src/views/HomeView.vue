@@ -6,7 +6,7 @@ const { collections } = useDB()
 
 <template>
   <NScrollbar class="h-[calc(100vh-80px-60px)]">
-    <div class="grid-(~ cols-5) p3 box-border gap-3">
+    <div class="grid grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 p3 box-border gap-3">
       <NCard
         v-for="{ bvid, cover, title } in collections"
         :key="bvid"

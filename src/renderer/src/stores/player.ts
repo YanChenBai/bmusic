@@ -36,8 +36,42 @@ export interface PlayerInfo {
   state: PlayerStateEnum
 }
 
+export interface PayQuality {
+  id: number
+  url: string
+}
+
+let ip: number
+async function getPlayUrl(bvid: string, cid: number, sessdata?: string) {
+  if (ip === undefined)
+    ip = await window.invokes.getPort()
+
+  const { data, code, message: msg } = await window.invokes.getPlayUrl(bvid, cid, sessdata)
+
+  if (code !== 0)
+    throw new Error(msg ?? '获取数据失败')
+
+  // 如果有flac就添加进去
+  if (data.dash.flac?.audio)
+    data.dash.audio.unshift(data.dash.flac.audio)
+
+  const list: PayQuality[] = data.dash.audio.map((item) => {
+    return {
+      id: item.id,
+      url: `http://localhost:${ip}/proxy/audio?url=${encodeURIComponent(item.backupUrl[0])}`,
+    }
+  })
+
+  return {
+    longTime: data.timelength,
+    list,
+  }
+}
+
 export const usePlayerStore = defineStore('player', () => {
   const { on: onPlayerState, trigger: playerStateTrigger } = createEventHook<PlayerStateEnum>()
+  const { on: onSetProgress, trigger: setProgress } = createEventHook<number>()
+  const { config } = useConfigStore()
   const curPlaySong = ref<PlaylistSong>()
   const playlist = ref<PlaylistSong[]>([])
   const playerInfo = reactive<PlayerInfo>({
@@ -48,6 +82,7 @@ export const usePlayerStore = defineStore('player', () => {
     state: PlayerStateEnum.PAUSE,
     longTime: 0,
   })
+  const playQuality = ref<PayQuality[]>([])
   const playlistSet = computed(() => new Set(playlist.value.map(i => `${i.bvid}:${i.cid}`)))
 
   function delPlaylist(bvid: string, cid: number) {
@@ -92,22 +127,28 @@ export const usePlayerStore = defineStore('player', () => {
   }
 
   /** 设置播放歌曲 */
-  function setPlaySong(song: PlaylistSong) {
-    window.invokes.getMediaInfo(song.bvid, song.cid)
-      .then(({ data, code, message: msg }) => {
-        if (code !== 0) {
-          message.error(msg ?? '获取数据失败')
-          return
-        }
-        curPlaySong.value = song
-        playerInfo.url = data.durl[0].url
-        playerInfo.longTime = data.timelength / 1000
-        unshiftPlaylist(song)
-        playerStateToggle(PlayerStateEnum.PLAY)
-      })
-      .catch((err) => {
-        message.error(err.message)
-      })
+  async function setPlaySong(song: PlaylistSong) {
+    try {
+      const { longTime, list } = await getPlayUrl(song.bvid, song.cid, config.sessdata)
+
+      curPlaySong.value = song
+      playerInfo.longTime = longTime / 1000
+      playerInfo.url = list[0].url
+      playQuality.value = list
+
+      unshiftPlaylist(song)
+      playerStateToggle(PlayerStateEnum.PLAY)
+    }
+    catch {
+      message.error('获取播放地址失败')
+    }
+  }
+
+  function recoverPlaySong() {
+    const song = curPlaySong.value
+    if (!song)
+      return
+    setPlaySong(song)
   }
 
   /** 修改音量 */
@@ -141,6 +182,7 @@ export const usePlayerStore = defineStore('player', () => {
     playlist,
     playerInfo,
     curPlaySong,
+    playQuality,
     unshiftPlaylist,
     pushPlaylist,
     setPlaySong,
@@ -153,6 +195,9 @@ export const usePlayerStore = defineStore('player', () => {
     onPlayerState,
     playerStateToggle,
     cleatPlaylist,
+    recoverPlaySong,
+    setProgress,
+    onSetProgress,
   }
 }, {
   persist: {

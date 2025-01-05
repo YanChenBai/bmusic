@@ -110,12 +110,8 @@ watchEffect(() => {
               @dblclick.stop="() => platSong(item)"
             >
               <NCheckbox v-show="checkboxState" size="small" :value="`${item.bvid}:${item.cid}`" @click.stop />
-              <div class="flex-shrink-0 pos-relative size-36px">
-                <div v-if="isCurPlaySong(item)" class="pos-absolute size-full pointer-events-none flex justify-center items-center rd-1 bg-#000/20">
-                  <div class="i-svg-spinners:bars-scale-fade size-4 text-#FF6699" />
-                </div>
-                <CoverImage :src="item.cover" size="36px" />
-              </div>
+              <IsPlayingCoverImage :song="item" size="36px" class="flex-shrink-0" />
+
               <div class="flex flex-col overflow-hidden pr2 box-border select-none leading-4.5">
                 <NEllipsis
                   :tooltip="{ placement: 'bottom' }"

@@ -16,15 +16,17 @@ const dbModeOptions = [
 
 <template>
   <div class="box-border p3">
-    <NCard :bordered="false" title="设置" class="mt-3">
+    <NCard :bordered="false" title="设置" class="bg-white/2">
       <NDivider style="margin: 0;" />
-      <div class="flex items-center py3">
-        <NText class="text-3.5 font-500">
-          播放器
-        </NText>
+      <SettingItem title="存储模式">
+        <NSelect v-model:value="config.dbMode" class="w-50" :options="dbModeOptions" />
+      </SettingItem>
 
-        <NSelect v-model:value="config.dbMode" class="ml-a w-50" :options="dbModeOptions" />
-      </div>
+      <SettingItem title="Cookie (SESSDATA)">
+        <div class="w-50">
+          <NInput v-model:value="config.sessdata" type="password" show-password-on="click" />
+        </div>
+      </SettingItem>
     </NCard>
   </div>
 </template>

@@ -3,7 +3,7 @@ import { NInputGroup } from 'naive-ui'
 
 const inputVal = ref('')
 const router = useRouter()
-const [isFocus, focusToggle] = useToggle(false)
+
 function search() {
   if (inputVal.value.trim().length === 0)
     return
@@ -35,14 +35,12 @@ function onBack() {
     <div class="flex justify-end items-center">
       <NPageHeader class="no-drag" @back="onBack" />
       <div class="flex w-full justify-end">
-        <div class="transition-all" :class="[isFocus ? 'w-500px mr-89px' : 'w-300px']">
+        <div class="w-300px">
           <NInputGroup class="no-drag">
             <NInput
               v-model:value="inputVal"
               :autofocus="false"
               @keydown.enter="search"
-              @focus="() => focusToggle(true)"
-              @blur="() => focusToggle(false)"
             />
             <NButton type="primary" ghost @click="search">
               <template #icon>

@@ -6,8 +6,12 @@ export enum DBModeEnum {
 }
 
 export const useConfigStore = defineStore('config', () => {
-  const config = reactive({
+  const config = reactive<{
+    dbMode: DBModeEnum
+    sessdata: string | undefined
+  }>({
     dbMode: DBModeEnum.LOCAL_STORAGE,
+    sessdata: undefined,
   })
 
   return {

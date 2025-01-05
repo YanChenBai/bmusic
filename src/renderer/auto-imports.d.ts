@@ -6,7 +6,10 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const DBModeEnum: typeof import('./src/stores/config')['DBModeEnum']
   const EffectScope: typeof import('vue')['EffectScope']
+  const LocalStorageDB: typeof import('./src/stores/db.localstorage')['LocalStorageDB']
+  const NotSaveDB: typeof import('./src/stores/db.nosave')['NotSaveDB']
   const PlayerModeEnum: typeof import('./src/stores/player')['PlayerModeEnum']
   const PlayerStateEnum: typeof import('./src/stores/player')['PlayerStateEnum']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
@@ -162,13 +165,16 @@ declare global {
   const useCollection: typeof import('./src/stores/collection')['useCollection']
   const useCollectionStore: typeof import('./src/stores/collection')['useCollectionStore']
   const useColorMode: typeof import('@vueuse/core')['useColorMode']
+  const useConfigStore: typeof import('./src/stores/config')['useConfigStore']
   const useConfirmDialog: typeof import('@vueuse/core')['useConfirmDialog']
+  const useContextMenu: typeof import('./src/utils/contextMenu')['useContextMenu']
   const useCounter: typeof import('@vueuse/core')['useCounter']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVar: typeof import('@vueuse/core')['useCssVar']
   const useCssVars: typeof import('vue')['useCssVars']
   const useCurrentElement: typeof import('@vueuse/core')['useCurrentElement']
   const useCycleList: typeof import('@vueuse/core')['useCycleList']
+  const useDB: typeof import('./src/stores/db')['useDB']
   const useDark: typeof import('@vueuse/core')['useDark']
   const useDateFormat: typeof import('@vueuse/core')['useDateFormat']
   const useDebounce: typeof import('@vueuse/core')['useDebounce']
@@ -329,9 +335,21 @@ declare global {
   export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
-  export type { CollectionItem, FavoriteItem } from './src/stores/collection'
-  import('./src/stores/collection')
+  export type { DBModeEnum } from './src/stores/config'
+  import('./src/stores/config')
   // @ts-ignore
-  export type { PlayerModeEnum, PlayerStateEnum, PlaylistSong, PlayerInfo } from './src/stores/player'
+  export type { LocalStorageDB } from './src/stores/db.localstorage'
+  import('./src/stores/db.localstorage')
+  // @ts-ignore
+  export type { NotSaveDB } from './src/stores/db.nosave'
+  import('./src/stores/db.nosave')
+  // @ts-ignore
+  export type { PlayerModeEnum, PlayerStateEnum, PlaylistSong, PlayerInfo, PayQuality } from './src/stores/player'
   import('./src/stores/player')
+  // @ts-ignore
+  export type { Option, GetActionMap } from './src/utils/contextMenu'
+  import('./src/utils/contextMenu')
+  // @ts-ignore
+  export type { CollectionItem, FavoriteItem } from './src/utils/songDB'
+  import('./src/utils/songDB')
 }

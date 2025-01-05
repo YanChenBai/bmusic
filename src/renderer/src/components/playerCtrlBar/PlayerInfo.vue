@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { usePlayerStoreRefs } from '@renderer/stores/player'
 
-const videoRef = useTemplateRef('videoRef')
+const audioRef = useTemplateRef('audioRef')
 const { curPlaySong, playerInfo } = usePlayerStoreRefs()
-const { onPlayerState } = usePlayerStore()
+const { onPlayerState, recoverPlaySong, onSetProgress } = usePlayerStore()
 const playerCtrl = usePlayerCtrl()
-const loading = ref(true)
 
 onMounted(() => {
-  const el = videoRef.value
+  const el = audioRef.value
   if (!el)
     return
 
@@ -21,17 +20,22 @@ onMounted(() => {
   el.addEventListener('pause', () => playerInfo.value.state = PlayerStateEnum.PAUSE)
   el.addEventListener('play', () => playerInfo.value.state = PlayerStateEnum.PLAY)
 
-  el.addEventListener('ended', () => {
-    playerCtrl.autoNext()
-  })
+  el.addEventListener('ended', () => playerCtrl.autoNext())
 
-  el.addEventListener('loadstart', () => loading.value = true)
-  el.addEventListener('loadeddata', () => loading.value = false)
+  recoverPlaySong()
+})
+
+onSetProgress((val) => {
+  const el = audioRef.value
+  if (!el)
+    return
+
+  el.currentTime = val
 })
 
 // 播放状态修改
 onPlayerState((state) => {
-  const el = videoRef.value
+  const el = audioRef.value
   if (!el)
     return
 
@@ -48,19 +52,21 @@ onPlayerState((state) => {
 })
 
 /** 监听播放地址变化 */
-watchEffect(() => {
-  const el = videoRef.value
-  const url = playerInfo.value.url
-  if (!el || !url)
-    return
+watch(
+  () => playerInfo.value.url,
+  (url) => {
+    const el = audioRef.value
+    if (!el || !url)
+      return
 
-  el.src = url
-  el.play()
-})
+    el.src = url
+    el.play()
+  },
+)
 
 /** 监听音量变换且同步 */
 watchEffect(() => {
-  const el = videoRef.value
+  const el = audioRef.value
   if (!el)
     return
 
@@ -71,9 +77,13 @@ watchEffect(() => {
 <template>
   <div class="py-4 pl-4 box-border h-80px grid-(~ cols-[48px_1fr]) gap-3 select-none">
     <div class="size-12 flex items-center justify-center">
-      <video v-show="!loading" ref="videoRef" autoplay class="w-12 aspect-square object-cover rd-1 z-1" />
-      <CoverImage v-show="loading" size="48px" :src="curPlaySong?.cover" class="aspect-square object-cover rd-1" />
+      <!-- <video v-show="!loading" ref="videoRef" autoplay class="w-12 aspect-square object-cover rd-1 z-1" /> -->
+      <audio ref="audioRef" autoplay controls class="hidden">
+        <source :src="playerInfo.url ?? ''" type="audio/mp4">
+      </audio>
+      <CoverImage size="48px" :src="curPlaySong?.cover" class="aspect-square object-cover rd-1" />
     </div>
+
     <div class="flex flex-col gap-1">
       <TextAutoMarquee :key="`${curPlaySong?.bvid}-${curPlaySong?.cid}`" :content="curPlaySong?.name ?? '暂无播放捏~'" />
       <div class="text-#A2A2A3 text-3">

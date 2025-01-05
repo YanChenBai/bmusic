@@ -90,7 +90,7 @@ function onAddCollection() {
         <template v-else>
           <div class="grid-(~ cols-[128px_1fr]) gap-4">
             <CoverImage size="128px" class="rd-2" :src="data?.cover" :preview="true" />
-            <div flex flex-col>
+            <div class="flex flex-col">
               <div class="flex flex-col gap-1">
                 <TextLoadPlaceholder :loading="isLoading" skeleton-class="max-w-360px">
                   <div class="text-xl">
@@ -138,7 +138,6 @@ function onAddCollection() {
           <SongTable :data="data?.list ?? []" />
         </template>
       </div>
-      <NBackTop :bottom="100" :right="10" />
     </NScrollbar>
   </NSpin>
 </template>

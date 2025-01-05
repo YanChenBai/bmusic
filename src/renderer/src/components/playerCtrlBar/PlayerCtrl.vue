@@ -2,12 +2,22 @@
 import { PlayerStateEnum, usePlayerCtrl, usePlayerStoreRefs } from '@renderer/stores/player'
 import { formatSeconds } from '@renderer/utils/formatSeconds'
 
-const { playerStateToggle } = usePlayerStore()
+const progressBar = useTemplateRef('progressBar')
+const { playerStateToggle, setProgress } = usePlayerStore()
 const { playerInfo } = usePlayerStoreRefs()
 const playerCtrl = usePlayerCtrl()
 
 const playTime = computed(() => formatSeconds(playerInfo.value.progress))
 const longTime = computed(() => formatSeconds(playerInfo.value.longTime))
+
+function seek(event: MouseEvent) {
+  const el = progressBar.value
+  if (!el)
+    return
+
+  const progress = Number((Math.max(0, event.x - el.offsetLeft) / el.offsetWidth).toFixed(2)) * playerInfo.value.longTime
+  setProgress(progress)
+}
 </script>
 
 <template>
@@ -40,7 +50,7 @@ const longTime = computed(() => formatSeconds(playerInfo.value.longTime))
       <div class="text-3 text-#A2A2A3">
         {{ playTime }}
       </div>
-      <div class="h-1 rd-2 w-full bg-white/10 overflow-hidden">
+      <div ref="progressBar" class="h-1 rd-2 w-full bg-white/10 overflow-hidden max-w-100 m-a" @click="seek">
         <div class="h-full bg-white rd-2" :style="{ width: `${playerInfo.progress / playerInfo.longTime * 100}%` }" />
       </div>
       <div class="text-3 text-#A2A2A3">

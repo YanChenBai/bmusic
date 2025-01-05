@@ -16,7 +16,7 @@ const columns: DataTableColumns<PlaylistSong> = [
     key: 'name',
     title: '歌名/歌手',
     render(rowData) {
-      return h(InfoCol, rowData)
+      return h(InfoCol, { song: rowData })
     },
   },
   {
