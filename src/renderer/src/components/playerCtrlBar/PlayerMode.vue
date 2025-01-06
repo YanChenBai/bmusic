@@ -17,6 +17,10 @@ const options = [
     label: '单曲循环',
     value: PlayerModeEnum.REPEAT_ONE,
   },
+  {
+    label: '单次播放',
+    value: PlayerModeEnum.PLAY_ONCE,
+  },
 ]
 
 const curModelTitle = computed(() => options.find(item => item.value === playerInfo.value.mode)?.label)

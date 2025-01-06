@@ -236,14 +236,14 @@ abstract class PlayerMode {
 }
 
 /** 列表循环 */
-class PlayerListLoop extends PlayerMode {
+class RepeatAll extends PlayerMode {
   autoNext() {
     this.next()
   }
 }
 
 /** 单曲循环 */
-class PlayerSingleLoop extends PlayerMode {
+class RepeatOne extends PlayerMode {
   autoNext() {
     const song = this.store.curPlaySong
     if (!song)
@@ -253,7 +253,7 @@ class PlayerSingleLoop extends PlayerMode {
 }
 
 /** 顺序播放 */
-class PlayerLinear extends PlayerMode {
+class Sequential extends PlayerMode {
   autoNext() {
     const currentIndex = this.store.curPlaySongIndex()
     const isLast = currentIndex === this.store.playlist.length - 1
@@ -263,7 +263,7 @@ class PlayerLinear extends PlayerMode {
 }
 
 /** 随机播放 */
-class PlayerRandom extends PlayerMode {
+class Shuffle extends PlayerMode {
   next() {
     const randomIndex = Math.floor(Math.random() * this.store.playlist.length)
     this.store.setPlaySong(this.store.playlist[randomIndex])
@@ -274,15 +274,21 @@ class PlayerRandom extends PlayerMode {
   }
 }
 
+/** 单词播放 */
+class PlayOnce extends PlayerMode {
+  autoNext() {}
+}
+
 export const usePlayerCtrl = createSharedComposable(() => {
   const store = usePlayerStore()
   const { playerInfo } = usePlayerStoreRefs()
 
   const instances = {
-    [PlayerModeEnum.REPEAT_ALL]: new PlayerListLoop(store),
-    [PlayerModeEnum.REPEAT_ONE]: new PlayerSingleLoop(store),
-    [PlayerModeEnum.SEQUENTIAL]: new PlayerLinear(store),
-    [PlayerModeEnum.SHUFFLE]: new PlayerRandom(store),
+    [PlayerModeEnum.REPEAT_ALL]: new RepeatAll(store),
+    [PlayerModeEnum.REPEAT_ONE]: new RepeatOne(store),
+    [PlayerModeEnum.SEQUENTIAL]: new Sequential(store),
+    [PlayerModeEnum.SHUFFLE]: new Shuffle(store),
+    [PlayerModeEnum.PLAY_ONCE]: new PlayOnce(store),
   }
 
   const mode = computed(() => playerInfo.value.mode ?? PlayerModeEnum.REPEAT_ALL)
