@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { usePlayerStoreRefs } from '@renderer/stores/player'
+import { useSongSwitcher } from '@renderer/utils/songSwitcher'
 
 const audioRef = useTemplateRef('audioRef')
-const { curPlaySong, playerInfo } = usePlayerStoreRefs()
+const { playerInfo } = usePlayerStoreRefs()
+const songSwitcher = useSongSwitcher()
 const { onPlayerState, recoverPlaySong, onSetProgress } = usePlayerStore()
-const playerCtrl = usePlayerCtrl()
 
 onMounted(() => {
   const el = audioRef.value
@@ -20,7 +21,7 @@ onMounted(() => {
   el.addEventListener('pause', () => playerInfo.value.state = PlayerStateEnum.PAUSE)
   el.addEventListener('play', () => playerInfo.value.state = PlayerStateEnum.PLAY)
 
-  el.addEventListener('ended', () => playerCtrl.autoNext())
+  el.addEventListener('ended', () => songSwitcher.autoNext())
 
   recoverPlaySong()
 })
@@ -75,20 +76,7 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="py-4 pl-4 box-border h-80px grid-(~ cols-[48px_1fr]) gap-3 select-none">
-    <div class="size-12 flex items-center justify-center">
-      <!-- <video v-show="!loading" ref="videoRef" autoplay class="w-12 aspect-square object-cover rd-1 z-1" /> -->
-      <audio ref="audioRef" autoplay controls class="hidden">
-        <source :src="playerInfo.url ?? ''" type="audio/mp4">
-      </audio>
-      <CoverImage size="48px" :src="curPlaySong?.cover" class="aspect-square object-cover rd-1" />
-    </div>
-
-    <div class="flex flex-col gap-1">
-      <TextAutoMarquee :key="`${curPlaySong?.bvid}-${curPlaySong?.cid}`" :content="curPlaySong?.name ?? '暂无播放捏~'" />
-      <div class="text-#A2A2A3 text-3">
-        {{ curPlaySong?.author ?? '无' }}
-      </div>
-    </div>
-  </div>
+  <audio ref="audioRef" controls class="hidden">
+    <source :src="playerInfo.url ?? ''" type="audio/mp4">
+  </audio>
 </template>

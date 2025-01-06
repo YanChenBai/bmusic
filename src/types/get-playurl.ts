@@ -43,8 +43,21 @@ interface Dolby {
   type: number
   audio?: any
 }
+
+export type QualityID =
+/** 64K */
+  30216 |
+/** 132K */
+  30232 |
+/** 192K */
+  30280 |
+/** 杜比 */
+  30250 |
+/** 无损 */
+  30251
+
 interface Video {
-  id: number
+  id: QualityID
   baseUrl: string
   base_url: string
   backupUrl: string[]

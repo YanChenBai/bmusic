@@ -8,7 +8,7 @@ const { isCurPlaySong } = usePlayerStore()
 
 <template>
   <div class="grid-(~ cols-[42px_1fr]) gap-2 overflow-hidden">
-    <IsPlayingCoverImage :song="song" size="42px" />
+    <PlayingCoverImage :song="song" size="42px" />
 
     <div class="flex flex-col justify-center">
       <div

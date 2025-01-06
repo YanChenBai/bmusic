@@ -32,7 +32,7 @@ const curQualityTitle = computed(() => options.value.find(item => item.value ===
 
 <template>
   <NPopselect v-model:value="playerInfo.url" :options="options" trigger="click">
-    <NButton>
+    <NButton size="small">
       {{ curQualityTitle }}
     </NButton>
   </NPopselect>

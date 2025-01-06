@@ -15,7 +15,7 @@ function handleWheel(payload: WheelEvent) {
     <template #trigger>
       <NPopover :show-arrow="false" trigger="click">
         <template #trigger>
-          <NButton>
+          <NButton text class="px-2">
             <template #icon>
               <NIcon size="22">
                 <div v-if="playerInfo.volume === 0" class="i-material-symbols:volume-mute-rounded" />

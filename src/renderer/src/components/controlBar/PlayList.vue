@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { PlaylistSong } from '@renderer/stores/player'
 
+const scrollEl = useTemplateRef('scroll')
 const [drawerState, drawerToggle] = useToggle(false)
 const [checkboxState, checkboxToggle] = useToggle(false)
-const { playlist } = usePlayerStoreRefs()
+const { playlist, curPlaySong } = usePlayerStoreRefs()
 const { isCurPlaySong, delPlaylist, setPlaySong } = usePlayerStore()
 const selectedSongs = ref<string[]>([])
 const isSelectedAll = ref(false)
@@ -58,12 +59,29 @@ watchEffect(() => {
     selectedSongs.value = []
   }
 })
+
+function onShow(state: boolean) {
+  if (!state)
+    return
+
+  const bvid = curPlaySong.value?.bvid
+  const cid = curPlaySong.value?.cid
+
+  if (!bvid || !cid)
+    return
+
+  const index = Math.max(0, playlist.value.findIndex(v => v.bvid === bvid && v.cid === cid))
+
+  nextTick(() => scrollEl.value?.scrollTo(0, index * 52))
+}
+
+watch(drawerState, onShow)
 </script>
 
 <template>
   <div class="pr-7 text-#A5A5A5">
-    <NBadge :value="playlist.length">
-      <NButton @click="() => drawerToggle()">
+    <NBadge :value="playlist.length" :offset="[0, 0]" :max="99">
+      <NButton text class="px-2" @click="() => drawerToggle()">
         <template #icon>
           <NIcon size="28">
             <div class="i-material-symbols:playlist-play-rounded" />
@@ -94,7 +112,7 @@ watchEffect(() => {
           </div>
         </template>
 
-        <NScrollbar class="px3 box-border pos-relative" content-class="pb-3">
+        <NScrollbar ref="scroll" class="px3 box-border pos-relative" content-class="pb-3">
           <div v-show="checkboxState" class="pt-2 pl2">
             <!-- <NCheckbox v-model:checked="isSelectedAll" size="small" label="全选" />
             <NDivider vertical /> -->
@@ -103,14 +121,15 @@ watchEffect(() => {
           <NCheckboxGroup v-if="playlist.length" v-model:value="selectedSongs">
             <div
               v-for="item in playlist"
-              :key="`${item.bvid}-${item.cid}`"
+              :key="`${item.bvid}:${item.cid}`"
+              :row-song="`${item.bvid}:${item.cid}`"
               checkbox
               class="flex items-center gap-2 bg pos-relative group overflow-hidden"
               @click="handleClick"
               @dblclick.stop="() => platSong(item)"
             >
               <NCheckbox v-show="checkboxState" size="small" :value="`${item.bvid}:${item.cid}`" @click.stop />
-              <IsPlayingCoverImage :song="item" size="36px" class="flex-shrink-0" />
+              <PlayingCoverImage :song="item" size="36px" class="flex-shrink-0" />
 
               <div class="flex flex-col overflow-hidden pr2 box-border select-none leading-4.5">
                 <NEllipsis

@@ -92,26 +92,26 @@ function onAddCollection() {
             <CoverImage size="128px" class="rd-2" :src="data?.cover" :preview="true" />
             <div class="flex flex-col">
               <div class="flex flex-col gap-1">
-                <TextLoadPlaceholder :loading="isLoading" skeleton-class="max-w-360px">
+                <SkeletonPlaceholder :loading="isLoading" skeleton-class="max-w-360px">
                   <div class="text-xl">
                     {{ data?.title }}
                   </div>
-                </TextLoadPlaceholder>
+                </SkeletonPlaceholder>
 
                 <div class="flex gap-2">
                   <CoverImage size="16px" class="rd-full" :src="data?.cover" />
-                  <TextLoadPlaceholder :loading="isLoading" skeleton-class="max-w-300px">
+                  <SkeletonPlaceholder :loading="isLoading" skeleton-class="max-w-300px">
                     <span class="text-(3 #A2A2A3)">{{ data?.author }}</span>
-                  </TextLoadPlaceholder>
+                  </SkeletonPlaceholder>
                 </div>
 
-                <TextLoadPlaceholder :loading="isLoading" skeleton-class="max-w-300px" :repeat="2">
+                <SkeletonPlaceholder :loading="isLoading" skeleton-class="max-w-300px" :repeat="2">
                   <div class="text-(3 #A2A2A3)">
                     <NEllipsis class="overflow-hidden whitespace-pre max-w-600px" expand-trigger="click" line-clamp="1" :tooltip="false">
                       {{ data?.desc }}
                     </NEllipsis>
                   </div>
-                </TextLoadPlaceholder>
+                </SkeletonPlaceholder>
               </div>
 
               <div class="flex gap-2 mt-auto pt-2">

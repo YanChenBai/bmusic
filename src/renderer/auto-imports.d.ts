@@ -271,6 +271,7 @@ declare global {
   const useSessionStorage: typeof import('@vueuse/core')['useSessionStorage']
   const useShare: typeof import('@vueuse/core')['useShare']
   const useSlots: typeof import('vue')['useSlots']
+  const useSongSwitcher: typeof import('./src/utils/songSwitcher')['useSongSwitcher']
   const useSorted: typeof import('@vueuse/core')['useSorted']
   const useSpeechRecognition: typeof import('@vueuse/core')['useSpeechRecognition']
   const useSpeechSynthesis: typeof import('@vueuse/core')['useSpeechSynthesis']
@@ -344,7 +345,7 @@ declare global {
   export type { NotSaveDB } from './src/stores/db.nosave'
   import('./src/stores/db.nosave')
   // @ts-ignore
-  export type { PlayerModeEnum, PlayerStateEnum, PlaylistSong, PlayerInfo, PayQuality } from './src/stores/player'
+  export type { PlayerModeEnum, PlayerStateEnum, PlaylistSong, PlayerInfo, PlayQuality } from './src/stores/player'
   import('./src/stores/player')
   // @ts-ignore
   export type { Option, GetActionMap } from './src/utils/contextMenu'

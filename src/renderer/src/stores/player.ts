@@ -1,3 +1,4 @@
+import type { QualityID } from '~types/get-playurl'
 import { defineStore } from 'pinia'
 
 export enum PlayerModeEnum {
@@ -38,8 +39,8 @@ export interface PlayerInfo {
   state: PlayerStateEnum
 }
 
-export interface PayQuality {
-  id: number
+export interface PlayQuality {
+  id: QualityID
   url: string
 }
 
@@ -57,7 +58,7 @@ async function getPlayUrl(bvid: string, cid: number, sessdata?: string) {
   if (data.dash.flac?.audio)
     data.dash.audio.unshift(data.dash.flac.audio)
 
-  const list: PayQuality[] = data.dash.audio.map((item) => {
+  const list: PlayQuality[] = data.dash.audio.map((item) => {
     return {
       id: item.id,
       url: `http://localhost:${ip}/proxy/audio?url=${encodeURIComponent(item.backupUrl[0])}`,
@@ -71,11 +72,15 @@ async function getPlayUrl(bvid: string, cid: number, sessdata?: string) {
 }
 
 export const usePlayerStore = defineStore('player', () => {
+  const { config } = useConfigStore()
+
   const { on: onPlayerState, trigger: playerStateTrigger } = createEventHook<PlayerStateEnum>()
   const { on: onSetProgress, trigger: setProgress } = createEventHook<number>()
-  const { config } = useConfigStore()
-  const curPlaySong = ref<PlaylistSong>()
+
   const playlist = ref<PlaylistSong[]>([])
+  const playQuality = ref<PlayQuality[]>([])
+
+  const curPlaySong = ref<PlaylistSong>()
   const playerInfo = reactive<PlayerInfo>({
     progress: 0,
     volume: 50,
@@ -84,9 +89,10 @@ export const usePlayerStore = defineStore('player', () => {
     state: PlayerStateEnum.PAUSE,
     longTime: 0,
   })
-  const playQuality = ref<PayQuality[]>([])
+
   const playlistSet = computed(() => new Set(playlist.value.map(i => `${i.bvid}:${i.cid}`)))
 
+  /** 删除播放列表 */
   function delPlaylist(bvid: string, cid: number) {
     const index = playlist.value.findIndex(i => i.bvid === bvid && i.cid === cid)
     if (index === -1)
@@ -146,6 +152,7 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
+  /** 恢复播放 */
   function recoverPlaySong() {
     const song = curPlaySong.value
     if (!song)
@@ -166,6 +173,7 @@ export const usePlayerStore = defineStore('player', () => {
     return playlist.value.findIndex(i => i.bvid === song.bvid && i.cid === song.cid)
   }
 
+  /** 清除播放列表 */
   function cleatPlaylist() {
     playlist.value = []
   }
@@ -206,113 +214,12 @@ export const usePlayerStore = defineStore('player', () => {
     pick: [
       'playlist',
       'curPlaySong',
-      'playerInfo.longTime',
-      'playerInfo.mode',
-      'playerInfo.progress',
-      'playerInfo.url',
-      'playerInfo.volume',
+      'playerInfo',
+    ],
+    omit: [
+      'playerInfo.state',
     ],
   },
 })
 
 export const usePlayerStoreRefs = () => storeToRefs(usePlayerStore())
-
-abstract class PlayerMode {
-  constructor(protected store: ReturnType<typeof usePlayerStore>) {}
-
-  abstract autoNext(): void
-
-  next(): void {
-    const currentIndex = this.store.curPlaySongIndex()
-    const nextIndex = currentIndex === this.store.playlist.length - 1 ? 0 : currentIndex + 1
-    this.store.setPlaySong(this.store.playlist[nextIndex])
-  }
-
-  prev(): void {
-    const currentIndex = this.store.curPlaySongIndex()
-    const prevIndex = currentIndex <= 0 ? this.store.playlist.length - 1 : currentIndex - 1
-    this.store.setPlaySong(this.store.playlist[prevIndex])
-  }
-}
-
-/** 列表循环 */
-class RepeatAll extends PlayerMode {
-  autoNext() {
-    this.next()
-  }
-}
-
-/** 单曲循环 */
-class RepeatOne extends PlayerMode {
-  autoNext() {
-    const song = this.store.curPlaySong
-    if (!song)
-      return
-    this.store.setPlaySong(song)
-  }
-}
-
-/** 顺序播放 */
-class Sequential extends PlayerMode {
-  autoNext() {
-    const currentIndex = this.store.curPlaySongIndex()
-    const isLast = currentIndex === this.store.playlist.length - 1
-    if (!isLast)
-      this.next()
-  }
-}
-
-/** 随机播放 */
-class Shuffle extends PlayerMode {
-  next() {
-    const randomIndex = Math.floor(Math.random() * this.store.playlist.length)
-    this.store.setPlaySong(this.store.playlist[randomIndex])
-  }
-
-  autoNext() {
-    this.next()
-  }
-}
-
-/** 单词播放 */
-class PlayOnce extends PlayerMode {
-  autoNext() {}
-}
-
-export const usePlayerCtrl = createSharedComposable(() => {
-  const store = usePlayerStore()
-  const { playerInfo } = usePlayerStoreRefs()
-
-  const instances = {
-    [PlayerModeEnum.REPEAT_ALL]: new RepeatAll(store),
-    [PlayerModeEnum.REPEAT_ONE]: new RepeatOne(store),
-    [PlayerModeEnum.SEQUENTIAL]: new Sequential(store),
-    [PlayerModeEnum.SHUFFLE]: new Shuffle(store),
-    [PlayerModeEnum.PLAY_ONCE]: new PlayOnce(store),
-  }
-
-  const mode = computed(() => playerInfo.value.mode ?? PlayerModeEnum.REPEAT_ALL)
-
-  const instance = computed(() => {
-    const instance = instances[mode.value]
-
-    if (!instance)
-      throw new Error(`Unknown player mode: ${mode.value}`)
-
-    return instance
-  })
-
-  const playerCtrl: Omit<PlayerMode, 'store'> = {
-    next() {
-      instance.value.next()
-    },
-    prev() {
-      instance.value.prev()
-    },
-    autoNext() {
-      instance.value.autoNext()
-    },
-  }
-
-  return playerCtrl
-})

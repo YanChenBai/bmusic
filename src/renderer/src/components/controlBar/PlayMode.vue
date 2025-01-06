@@ -28,7 +28,9 @@ const curModelTitle = computed(() => options.find(item => item.value === playerI
 
 <template>
   <NPopselect v-model:value="playerInfo.mode" :options="options" trigger="click">
-    <NButton>{{ curModelTitle }}</NButton>
+    <NButton size="small">
+      {{ curModelTitle }}
+    </NButton>
   </NPopselect>
 </template>
 

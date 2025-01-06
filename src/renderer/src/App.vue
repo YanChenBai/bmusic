@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ControlBar from '@renderer/components/controlBar'
+import SideBar from '@renderer/components/sideBar'
 import { darkTheme, NConfigProvider, zhCN } from 'naive-ui'
 </script>
 
@@ -23,9 +25,9 @@ import { darkTheme, NConfigProvider, zhCN } from 'naive-ui'
     }"
   >
     <div class="size-screen grid-(~ rows-[60px_1fr_80px]) overflow-hidden">
-      <PlayerHeader />
+      <HeaderBar />
       <div class="grid-(~ cols-[220px_1fr]) h-full overflow-hidden">
-        <PlayerSidebar />
+        <SideBar />
         <div class="overflow-hidden pos-relative h-full overflow-hidden">
           <RouterView v-slot="{ Component, route }">
             <Transition name="fade">
@@ -36,7 +38,9 @@ import { darkTheme, NConfigProvider, zhCN } from 'naive-ui'
           </RouterView>
         </div>
       </div>
-      <PlayerCtrlBar />
+      <ControlBar />
+      <!-- 播放器 -->
+      <MusicPlayer />
     </div>
   </NConfigProvider>
 </template>
@@ -46,13 +50,14 @@ import { darkTheme, NConfigProvider, zhCN } from 'naive-ui'
 /* fade-transform */
 .fade-leave-active,
 .fade-enter-active {
-  transition: all 0.1s;
+  transition: all 0.2s;
 }
 
 /* 可能为enter失效，拆分为 enter-from和enter-to */
 .fade-enter-from {
   opacity: 0;
   transform: translateX(-8px);
+  position: fixed;
 }
 .fade-enter-to {
   opacity: 1;
@@ -62,6 +67,6 @@ import { darkTheme, NConfigProvider, zhCN } from 'naive-ui'
 .fade-leave-to {
   opacity: 0;
   transform: translateX(8px);
-  position: absolute;
+  position: fixed;
 }
 </style>
