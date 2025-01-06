@@ -1,36 +1,16 @@
 <script setup lang="ts">
-import { DBModeEnum, useConfigStore } from '@renderer/stores/config'
-
-const { config } = storeToRefs(useConfigStore())
-const dbModeOptions = [
-  {
-    label: '本地存储',
-    value: DBModeEnum.LOCAL_STORAGE,
-  },
-  {
-    label: '不保存',
-    value: DBModeEnum.NOT_SAVE,
-  },
-]
+/** 批量导入设置组件 */
+const settingComponents
+= Object.values(import.meta.glob<{ default: Component }>('@renderer/settings/*.vue', { eager: true })).map(module => module.default)
 </script>
 
 <template>
   <div class="box-border p3">
     <NCard :bordered="false" title="设置" class="bg-white/2">
-      <NDivider style="margin: 0;" />
-      <SettingItem title="存储模式">
-        <NSelect v-model:value="config.dbMode" class="w-50" :options="dbModeOptions" />
-      </SettingItem>
-
-      <SettingItem title="Cookie (SESSDATA)">
-        <div class="w-50">
-          <NInput v-model:value="config.sessdata" type="password" show-password-on="click" />
-        </div>
-      </SettingItem>
+      <template v-for="Component in settingComponents" :key="Component.name">
+        <NDivider style="margin: 0;" />
+        <Component :is="Component" />
+      </template>
     </NCard>
   </div>
 </template>
-
-<style scoped>
-
-</style>

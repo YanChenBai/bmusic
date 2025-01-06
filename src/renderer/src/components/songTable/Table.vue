@@ -50,7 +50,7 @@ function rowProps(song: PlaylistSong) {
       DataTable: {
         thColor: 'rgba(0,0,0,0)',
         tdColor: 'rgba(0,0,0,0)',
-        tdColorHover: '#2f2f30',
+        tdColorHover: '#2f2f33',
       },
     }"
   >

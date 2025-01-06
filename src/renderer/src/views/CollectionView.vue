@@ -2,7 +2,7 @@
 import type { PlaylistSong } from '@renderer/stores/player'
 import SongTable from '@renderer/components/songTable'
 import { useDB } from '@renderer/stores/db'
-import { NSpin } from 'naive-ui'
+import { NEllipsis, NSpin } from 'naive-ui'
 
 const props = defineProps<{
   bvid: string
@@ -93,9 +93,11 @@ function onAddCollection() {
             <div class="flex flex-col">
               <div class="flex flex-col gap-1">
                 <SkeletonPlaceholder :loading="isLoading" skeleton-class="max-w-360px">
-                  <div class="text-xl">
-                    {{ data?.title }}
-                  </div>
+                  <NEllipsis line-clamp="2" expand-trigger="click" :tooltip="false">
+                    <span class="text-xl">
+                      {{ data?.title }}
+                    </span>
+                  </NEllipsis>
                 </SkeletonPlaceholder>
 
                 <div class="flex gap-2">

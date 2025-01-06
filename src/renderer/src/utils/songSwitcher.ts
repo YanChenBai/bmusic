@@ -3,13 +3,13 @@ abstract class SongSwitcher {
 
   abstract autoNext(): void
 
-  next(): void {
+  next() {
     const currentIndex = this.store.curPlaySongIndex()
     const nextIndex = currentIndex === this.store.playlist.length - 1 ? 0 : currentIndex + 1
     this.store.setPlaySong(this.store.playlist[nextIndex])
   }
 
-  prev(): void {
+  prev() {
     const currentIndex = this.store.curPlaySongIndex()
     const prevIndex = currentIndex <= 0 ? this.store.playlist.length - 1 : currentIndex - 1
     this.store.setPlaySong(this.store.playlist[prevIndex])

@@ -1,3 +1,3 @@
-import ControlBar from './Index.vue'
+import ControlBar from './ControlBar.vue'
 
 export default ControlBar

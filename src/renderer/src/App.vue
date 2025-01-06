@@ -57,16 +57,17 @@ import { darkTheme, NConfigProvider, zhCN } from 'naive-ui'
 .fade-enter-from {
   opacity: 0;
   transform: translateX(-8px);
-  position: fixed;
+  position: absolute;
 }
 .fade-enter-to {
   opacity: 1;
   transform: translateX(0px);
+  position: absolute;
 }
 
 .fade-leave-to {
   opacity: 0;
   transform: translateX(8px);
-  position: fixed;
+  position: absolute;
 }
 </style>

@@ -37,6 +37,7 @@ export interface PlayerInfo {
   mode: PlayerModeEnum
   longTime: number
   state: PlayerStateEnum
+  deviceId: string | null
 }
 
 export interface PlayQuality {
@@ -88,6 +89,7 @@ export const usePlayerStore = defineStore('player', () => {
     mode: PlayerModeEnum.REPEAT_ALL,
     state: PlayerStateEnum.PAUSE,
     longTime: 0,
+    deviceId: null,
   })
 
   const playlistSet = computed(() => new Set(playlist.value.map(i => `${i.bvid}:${i.cid}`)))

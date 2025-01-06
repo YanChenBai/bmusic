@@ -1,3 +1,3 @@
-import Sidebar from './Index.vue'
+import Sidebar from './SideBar.vue'
 
 export default Sidebar

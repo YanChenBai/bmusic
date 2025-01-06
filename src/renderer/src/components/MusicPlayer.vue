@@ -73,6 +73,13 @@ watchEffect(() => {
 
   el.volume = playerInfo.value.volume / 100
 })
+
+watchEffect(() => {
+  const el = audioRef.value
+  const id = playerInfo.value.deviceId
+  if (id && el)
+    el.setSinkId(id)
+})
 </script>
 
 <template>
