@@ -3,19 +3,19 @@ const { playerInfo } = usePlayerStoreRefs()
 const options = [
   {
     label: '顺序播放',
-    value: PlayerModeEnum.LINEAR,
+    value: PlayerModeEnum.SEQUENTIAL,
   },
   {
     label: '列表循环',
-    value: PlayerModeEnum.LIST_LOOP,
+    value: PlayerModeEnum.REPEAT_ALL,
   },
   {
     label: '随机播放',
-    value: PlayerModeEnum.RANDOM,
+    value: PlayerModeEnum.SHUFFLE,
   },
   {
     label: '单曲循环',
-    value: PlayerModeEnum.SINGLE_LOOP,
+    value: PlayerModeEnum.REPEAT_ONE,
   },
 ]
 

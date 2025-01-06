@@ -2,13 +2,15 @@ import { defineStore } from 'pinia'
 
 export enum PlayerModeEnum {
   /** 列表循环 */
-  LIST_LOOP,
+  REPEAT_ALL,
   /** 单曲循环 */
-  SINGLE_LOOP,
+  REPEAT_ONE,
   /** 随机播放 */
-  RANDOM,
+  SHUFFLE,
   /** 顺序播放 */
-  LINEAR,
+  SEQUENTIAL,
+  /** 单次播放 */
+  PLAY_ONCE,
 }
 
 export enum PlayerStateEnum {
@@ -78,7 +80,7 @@ export const usePlayerStore = defineStore('player', () => {
     progress: 0,
     volume: 50,
     url: null,
-    mode: PlayerModeEnum.LIST_LOOP,
+    mode: PlayerModeEnum.REPEAT_ALL,
     state: PlayerStateEnum.PAUSE,
     longTime: 0,
   })
@@ -277,13 +279,13 @@ export const usePlayerCtrl = createSharedComposable(() => {
   const { playerInfo } = usePlayerStoreRefs()
 
   const instances = {
-    [PlayerModeEnum.LIST_LOOP]: new PlayerListLoop(store),
-    [PlayerModeEnum.SINGLE_LOOP]: new PlayerSingleLoop(store),
-    [PlayerModeEnum.LINEAR]: new PlayerLinear(store),
-    [PlayerModeEnum.RANDOM]: new PlayerRandom(store),
+    [PlayerModeEnum.REPEAT_ALL]: new PlayerListLoop(store),
+    [PlayerModeEnum.REPEAT_ONE]: new PlayerSingleLoop(store),
+    [PlayerModeEnum.SEQUENTIAL]: new PlayerLinear(store),
+    [PlayerModeEnum.SHUFFLE]: new PlayerRandom(store),
   }
 
-  const mode = computed(() => playerInfo.value.mode ?? PlayerModeEnum.LIST_LOOP)
+  const mode = computed(() => playerInfo.value.mode ?? PlayerModeEnum.REPEAT_ALL)
 
   const instance = computed(() => {
     const instance = instances[mode.value]

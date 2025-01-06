@@ -28,8 +28,6 @@ async function createWindow() {
     },
   })
 
-  mainWindow.setAlwaysOnTop(true, 'screen-saver')
-
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
