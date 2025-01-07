@@ -27,13 +27,13 @@ const options = computed(() =>
   }).sort((a, b) => SORT_INDEX[b.id] - SORT_INDEX[a.id]),
 )
 
-const curQualityTitle = computed(() => options.value.find(item => item.value === playerInfo.value.url)?.label)
+const curQualityTitle = computed(() => options.value.find(item => item.value === playerInfo.value.url)?.label ?? '无')
 </script>
 
 <template>
   <NPopselect v-model:value="playerInfo.url" :options="options" trigger="click">
-    <NButton size="small">
+    <NTag size="small" class="px2 py2.5 text-3 rd-2 cursor-pointer mr-2">
       {{ curQualityTitle }}
-    </NButton>
+    </NTag>
   </NPopselect>
 </template>

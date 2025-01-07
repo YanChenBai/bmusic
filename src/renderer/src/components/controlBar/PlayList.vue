@@ -95,7 +95,7 @@ watch(drawerState, onShow)
         <template #header>
           <div class="h-27px flex items-center justify-between px-5 py-3 select-none drag">
             <div class="text-4">
-              播放列表
+              播放列表 <span class="text-(3 #A5A5A5)">({{ playlist.length }})</span>
             </div>
             <div class="flex gap-2">
               <NButton class="no-drag" size="small" :type="checkboxState ? 'primary' : undefined" @click="checkboxToggle()">

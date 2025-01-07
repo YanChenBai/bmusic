@@ -17,7 +17,7 @@ function handleWheel(payload: WheelEvent) {
         <template #trigger>
           <NButton text class="px-2">
             <template #icon>
-              <NIcon size="22">
+              <NIcon size="24">
                 <div v-if="playerInfo.volume === 0" class="i-material-symbols:volume-mute-rounded" />
                 <div v-else class="i-material-symbols:volume-up-rounded" />
               </NIcon>

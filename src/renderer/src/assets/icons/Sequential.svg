@@ -1,0 +1,8 @@
+<svg width="24.000000" height="24.000000" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<g clip-path="url(#clip3_59)">
+		<rect id="矩形 2" x="3.000000" y="7.314026" rx="1.250000" width="18.000000" height="2.500000" fill="currentColor" fill-opacity="1.000000"/>
+		<rect id="矩形 2" x="16.100220" y="3.000000" rx="1.250000" width="7.444061" height="2.500000" transform="rotate(45 16.100220 3.000000)" fill="currentColor" fill-opacity="1.000000"/>
+		<rect id="矩形 2" rx="1.250000" width="18.000000" height="2.500000" transform="matrix(1 0 0 -1 3 16.686)" fill="currentColor" fill-opacity="1.000000"/>
+		<rect id="矩形 2" rx="1.250000" width="7.444061" height="2.500000" transform="matrix(0.707107 -0.707107 -0.707107 -0.707107 16.1002 21)" fill="currentColor" fill-opacity="1.000000"/>
+	</g>
+</svg>
