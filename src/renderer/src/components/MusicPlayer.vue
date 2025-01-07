@@ -3,7 +3,7 @@ import { usePlayerStoreRefs } from '@renderer/stores/player'
 import { useSongSwitcher } from '@renderer/utils/songSwitcher'
 
 const audioRef = useTemplateRef('audioRef')
-const { playerInfo } = usePlayerStoreRefs()
+const { playerInfo, curPlaySong } = usePlayerStoreRefs()
 const songSwitcher = useSongSwitcher()
 const { onPlayerState, recoverPlaySong, onSetProgress } = usePlayerStore()
 
@@ -80,6 +80,25 @@ watchEffect(() => {
   if (id && el)
     el.setSinkId(id)
 })
+
+/** 切换win正在播放的媒体数据 */
+watchEffect(() => {
+  const song = toValue(curPlaySong)
+  if (!song)
+    return
+
+  const metadata = new MediaMetadata({
+    title: song.name,
+    artist: song.author,
+    artwork: [{ src: song.cover }],
+  })
+
+  navigator.mediaSession.metadata = metadata
+})
+
+/** 监听win的播放上一首下一首事件 */
+navigator.mediaSession.setActionHandler('previoustrack', () => songSwitcher.prev())
+navigator.mediaSession.setActionHandler('nexttrack', () => songSwitcher.next())
 </script>
 
 <template>
