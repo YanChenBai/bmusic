@@ -7,6 +7,7 @@ import InfoCol from './columns/Info.vue'
 
 defineProps<{
   data: PlaylistSong[]
+  loading?: boolean
 }>()
 
 const { setPlaySong } = usePlayerStore()
@@ -20,7 +21,7 @@ const columns: DataTableColumns<PlaylistSong> = [
     },
   },
   {
-    key: 'part',
+    key: 'ctrl',
     render(rowData) {
       return h(CtrlCol, {
         song: rowData,
@@ -62,6 +63,19 @@ function rowProps(song: PlaylistSong) {
       :bottom-bordered="false"
       :single-column="true"
       :row-props="rowProps"
+      :loading="loading"
     />
   </NConfigProvider>
 </template>
+
+<style scoped>
+:deep(.n-data-table-tr td:first-child),
+:deep(.n-data-table-tr th:first-child){
+  @apply rd-[4px_0_0_4px];
+}
+
+:deep(.n-data-table-tr td:last-child),
+:deep(.n-data-table-tr th:last-child){
+  @apply rd-[0_4px_4px_0];
+}
+</style>

@@ -1,4 +1,5 @@
-import type { CollectionItem, FavoriteItem, SongListDB } from '@renderer/utils/songDB'
+import type { PlaylistSong } from '@renderer/types/playlist'
+import type { CollectionItem, SongListDB } from '@renderer/utils/songDB'
 import { DBModeEnum, useConfigStore } from './config'
 import { LocalStorageDB } from './db.localstorage'
 import { NotSaveDB } from './db.nosave'
@@ -35,7 +36,7 @@ export const useDB = createSharedComposable(() => {
       return instance.value.isInCollection(item)
     },
 
-    async isInFavorite(item: FavoriteItem) {
+    async isInFavorite(item: PlaylistSong) {
       return instance.value.isInFavorite(item)
     },
 
@@ -43,16 +44,28 @@ export const useDB = createSharedComposable(() => {
       return instance.value.addCollection(item)
     },
 
-    async addFavorite(item: FavoriteItem) {
+    async addFavorite(item: PlaylistSong) {
       return instance.value.addFavorite(item)
     },
 
-    async removeCollection(item: CollectionItem) {
-      return instance.value.removeCollection(item)
+    async removeCollection(bvid: string) {
+      return instance.value.removeCollection(bvid)
     },
 
-    async removeFavorite(item: FavoriteItem) {
+    async removeFavorite(item: PlaylistSong) {
       return instance.value.removeFavorite(item)
+    },
+
+    async modifyCollectionTitle(bvid, title) {
+      return instance.value.modifyCollectionTitle(bvid, title)
+    },
+
+    hasCollection(bvid) {
+      return instance.value.hasCollection(bvid)
+    },
+
+    hasFavorite(bvid, cid: number) {
+      return instance.value.hasFavorite(bvid, cid)
     },
   }
 

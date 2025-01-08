@@ -22,6 +22,9 @@ onMounted(() => {
   el.addEventListener('play', () => playerStateToggle(PlayerStateEnum.PLAY))
 
   el.addEventListener('ended', () => songSwitcher.autoNext())
+
+  el.addEventListener('loadedmetadata', () => playerInfo.value.loading = false)
+  el.addEventListener('loadstart', () => playerInfo.value.loading = true)
 })
 
 onJumpProgress((val) => {

@@ -16,11 +16,12 @@ withDefaults(defineProps<{
     :width="size"
     :height="size"
     :src="src"
+    :style="{ width: size, height: size }"
     :previewed-img-props="{ class: 'max-w-500px rd-2' }"
     :show-toolbar="false"
   >
     <template #placeholder>
-      <NSkeleton :height="size" :width="size" class="rd-1" />
+      <NSkeleton class="rd-2" :style="{ width: size, height: size }" />
     </template>
   </NImage>
 </template>

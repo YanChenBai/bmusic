@@ -53,12 +53,12 @@ import { darkTheme, NConfigProvider, zhCN } from 'naive-ui'
   transition: all 0.2s;
 }
 
-/* 可能为enter失效，拆分为 enter-from和enter-to */
 .fade-enter-from {
   opacity: 0;
   transform: translateX(-8px);
   position: absolute;
 }
+
 .fade-enter-to {
   opacity: 1;
   transform: translateX(0px);

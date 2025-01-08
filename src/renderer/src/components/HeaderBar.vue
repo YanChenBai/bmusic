@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NInputGroup } from 'naive-ui'
+import { NButton, NInputGroup } from 'naive-ui'
 
 const inputVal = ref('')
 const router = useRouter()
@@ -33,7 +33,31 @@ function onBack() {
       </NGradientText>
     </div>
     <div class="flex justify-end items-center">
-      <NPageHeader class="no-drag" @back="onBack" />
+      <NPageHeader class="no-drag" @back="onBack">
+        <template #back>
+          <NButton text>
+            <template #icon>
+              <NIcon size="24">
+                <div class="i-material-symbols:arrow-back-rounded" />
+              </NIcon>
+            </template>
+          </NButton>
+        </template>
+        <template #avatar>
+          <Transition name="home-btn">
+            <NButton
+              v-show="$route.name !== 'home'" text
+              @click="$router.push({ name: 'home' })"
+            >
+              <template #icon>
+                <NIcon size="24">
+                  <div class="i-material-symbols:home-rounded" />
+                </NIcon>
+              </template>
+            </NButton>
+          </Transition>
+        </template>
+      </NPageHeader>
       <div class="flex w-full justify-end">
         <div class="w-300px">
           <NInputGroup class="no-drag">
@@ -84,5 +108,13 @@ function onBack() {
 </template>
 
 <style scoped>
+.home-btn-enter-active,
+.home-btn-leave-active {
+  transition: opacity 0.2s ease;
+}
 
+.home-btn-enter-from,
+.home-btn-leave-to {
+  opacity: 0;
+}
 </style>

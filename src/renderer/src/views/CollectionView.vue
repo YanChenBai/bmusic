@@ -3,7 +3,7 @@ import type { PlaylistSong } from '@renderer/types/playlist'
 import SongTable from '@renderer/components/songTable'
 import { useDB } from '@renderer/stores/db'
 import { usePlaylistStore } from '@renderer/stores/playlist'
-import { NEllipsis, NSpin } from 'naive-ui'
+import { NEllipsis } from 'naive-ui'
 
 const props = defineProps<{
   bvid: string
@@ -11,7 +11,8 @@ const props = defineProps<{
 
 const playlistStore = usePlaylistStore()
 const { setPlaySong } = usePlayerStore()
-const { addCollection } = useDB()
+const { addCollection, collections, hasCollection, removeCollection } = useDB()
+const isHasCollection = computed(() => hasCollection(props.bvid))
 
 const { data, error, isLoading } = useQuery({
   key: () => ['getPlayerData', props.bvid],
@@ -47,7 +48,7 @@ const { data, error, isLoading } = useQuery({
                 cid: item.page.cid,
                 cover: item.arc.pic,
                 name: item.arc.title,
-                author: '-',
+                author: '',
                 longTime: item.page.duration,
               }
               map.set(`${item.bvid}:${item.page.cid}`, val)
@@ -75,17 +76,24 @@ function playCollection() {
   setPlaySong(list[0])
 }
 
-function onAddCollection() {
-  addCollection({
-    bvid: props.bvid,
-    title: data.value?.title ?? '',
-    cover: data.value?.cover ?? '',
-  })
+function addOrRemove() {
+  if (isHasCollection.value) {
+    removeCollection(props.bvid)
+  }
+  else {
+    addCollection({
+      bvid: props.bvid,
+      title: data.value?.title ?? '',
+      cover: data.value?.cover ?? '',
+    })
+  }
 }
+
+const title = computed(() => collections.value.find(item => item.bvid === props.bvid)?.title)
 </script>
 
 <template>
-  <NSpin :show="isLoading">
+  <div class="size-full">
     <NScrollbar class="h-[calc(100vh-80px-60px)]">
       <div class="p-4 box-border grid gap-4">
         <NResult v-if="error" status="404" title="请求错误" description="生活总归带点荒谬" class="mt-30" />
@@ -97,7 +105,7 @@ function onAddCollection() {
                 <SkeletonPlaceholder :loading="isLoading" skeleton-class="max-w-360px">
                   <NEllipsis line-clamp="2" expand-trigger="click" :tooltip="false">
                     <span class="text-xl">
-                      {{ data?.title }}
+                      {{ title }}
                     </span>
                   </NEllipsis>
                 </SkeletonPlaceholder>
@@ -127,31 +135,37 @@ function onAddCollection() {
                   </template>
                   播放
                 </NButton>
-                <NButton round size="small" secondary @click="onAddCollection">
+                <NButton round size="small" secondary :type="isHasCollection ? 'error' : undefined" @click="addOrRemove">
                   <template #icon>
                     <NIcon size="16">
-                      <div class="i-material-symbols:add-circle-outline-rounded" />
+                      <div v-if="isHasCollection" class="i-material-symbols:delete-forever-outline-rounded" />
+                      <div v-else class="i-material-symbols:add-circle-outline-rounded" />
                     </NIcon>
                   </template>
-                  添加
+                  {{ isHasCollection ? "移除" : "添加" }}
+                </NButton>
+                <NButton
+                  round
+                  size="small"
+                  secondary
+                  tag="a"
+                  :href="`https://www.bilibili.com/video/${bvid}`"
+                  target="_blank"
+                >
+                  <template #icon>
+                    <NIcon size="16">
+                      <div class="i-material-symbols:link" />
+                    </NIcon>
+                  </template>
+                  访问
                 </NButton>
               </div>
             </div>
           </div>
 
-          <SongTable :data="data?.list ?? []" />
+          <SongTable :data="data?.list ?? []" :loading="isLoading" />
         </template>
       </div>
     </NScrollbar>
-  </NSpin>
+  </div>
 </template>
-
-<style scoped>
-:deep(.n-data-table-tr td:first-child){
-  @apply rd-[4px_0_0_4px];
-}
-
-:deep(.n-data-table-tr td:last-child){
-  @apply rd-[0_4px_4px_0];
-}
-</style>

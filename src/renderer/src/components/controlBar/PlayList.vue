@@ -106,7 +106,7 @@ watch(drawerState, onShow)
                   <div class="i-material-symbols:checklist-rounded" />
                 </NIcon>
               </NButton>
-              <NButton class="no-drag" size="small" @click="batchDel">
+              <NButton v-show="checkboxState" class="no-drag" size="small" @click="batchDel">
                 <NIcon size="18">
                   <div class="i-material-symbols:delete-rounded" />
                 </NIcon>

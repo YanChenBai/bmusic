@@ -10,9 +10,11 @@ const longTime = computed(() => formatSeconds(playerInfo.value.longTime))
 
 <template>
   <div class="py-4 pl-4 box-border h-80px grid-(~ cols-[48px_1fr]) gap-2.5 select-none overflow-hidden">
-    <div class="size-12 flex items-center justify-center">
-      <CoverImage size="48px" :src="curPlaySong?.cover" class="aspect-square object-cover rd-1" />
-    </div>
+    <NSpin :show="playerInfo.loading" :size="24">
+      <div class="size-12 flex items-center justify-center">
+        <CoverImage size="48px" :src="curPlaySong?.cover" class="aspect-square object-cover rd-1" />
+      </div>
+    </NSpin>
 
     <div class="flex flex-col gap-1 justify-center w-full overflow-hidden">
       <AutoMarquee :key="`${curPlaySong?.bvid}-${curPlaySong?.cid}`">

@@ -40,6 +40,8 @@ export interface PlayerInfo {
   deviceId: string | null
   /** 播放质量 */
   quality: QualityID | null
+  /** 加载 */
+  loading: boolean
 }
 
 export interface PlayQuality {
@@ -76,17 +78,42 @@ async function getPlayUrl(bvid: string, cid: number, sessdata?: string) {
   }
 }
 
-export const { on: onPlayerState, trigger: playerStateTrigger } = createEventHook<PlayerStateEnum>()
+/** 自动导出有问题包一层函数 */
+function getHooks() {
+  const { on: onPlayerState, trigger: playerStateTrigger } = createEventHook<PlayerStateEnum>()
+
+  const {
+  /** 监听跳转播放进度 */
+    on: onJumpProgress,
+    /** 跳转播放进度 */
+    trigger: jumpProgress,
+  } = createEventHook<number>()
+
+  const { on: onSongChange, trigger: songChangeTrigger } = createEventHook()
+  const { on: onQualityChange, trigger: qualityChangeTrigger } = createEventHook<PlayQuality>()
+
+  return {
+    jumpProgress,
+    onJumpProgress,
+    onPlayerState,
+    onQualityChange,
+    onSongChange,
+    playerStateTrigger,
+    qualityChangeTrigger,
+    songChangeTrigger,
+  }
+}
 
 export const {
-  /** 监听跳转播放进度 */
-  on: onJumpProgress,
-  /** 跳转播放进度 */
-  trigger: jumpProgress,
-} = createEventHook<number>()
-
-export const { on: onSongChange, trigger: songChangeTrigger } = createEventHook()
-export const { on: onQualityChange, trigger: qualityChangeTrigger } = createEventHook<PlayQuality>()
+  jumpProgress,
+  onJumpProgress,
+  onPlayerState,
+  onQualityChange,
+  onSongChange,
+  playerStateTrigger,
+  qualityChangeTrigger,
+  songChangeTrigger,
+} = getHooks()
 
 export const usePlayerStore = defineStore('player', () => {
   const { config } = useConfigStore()
@@ -104,6 +131,7 @@ export const usePlayerStore = defineStore('player', () => {
     longTime: 0,
     deviceId: null,
     quality: null,
+    loading: false,
   })
 
   /** 切换播放状态值 */

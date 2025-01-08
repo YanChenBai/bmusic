@@ -1,4 +1,5 @@
-import type { CollectionItem, FavoriteItem } from '@renderer/utils/songDB'
+import type { PlaylistSong } from '@renderer/types/playlist'
+import type { CollectionItem } from '@renderer/utils/songDB'
 import { SongListDB } from '@renderer/utils/songDB'
 
 const useDBStore = defineStore('db', () => {
@@ -10,7 +11,7 @@ const useDBStore = defineStore('db', () => {
     },
   ])
 
-  const favorites = ref<FavoriteItem[]>([])
+  const favorites = ref<PlaylistSong[]>([])
 
   return {
     collections,
@@ -28,12 +29,16 @@ export class LocalStorageDB extends SongListDB {
   collections = toRef(this.store.collections)
   favorites = toRef(this.store.favorites)
 
+  collectionfindIndex(bvid: string) {
+    return this.store.collections.findIndex(i => i.bvid === bvid)
+  }
+
   async isInCollection(item: CollectionItem) {
     return this.store.collections.some(i => i.bvid === item.bvid)
   }
 
-  async isInFavorite(item: FavoriteItem) {
-    return this.store.favorites.some(i => i.bvid === item.bvid)
+  async isInFavorite(item: PlaylistSong) {
+    return this.store.favorites.some(i => i.bvid === item.bvid && i.cid === item.cid)
   }
 
   async addCollection(item: CollectionItem) {
@@ -42,22 +47,22 @@ export class LocalStorageDB extends SongListDB {
     this.store.collections.push(item)
   }
 
-  async addFavorite(item: FavoriteItem) {
+  async addFavorite(item: PlaylistSong) {
     if (await this.isInFavorite(item))
       return
     this.store.favorites.push(item)
   }
 
-  async removeCollection(item: CollectionItem) {
-    const findIdx = this.store.collections.findIndex(i => i.bvid === item.bvid)
+  async removeCollection(bvid: string) {
+    const findIdx = this.collectionfindIndex(bvid)
     if (findIdx === -1)
       return
 
     this.store.collections.splice(findIdx, 1)
   }
 
-  async removeFavorite(item: FavoriteItem) {
-    const findIdx = this.store.favorites.findIndex(i => i.bvid === item.bvid)
+  async removeFavorite(item: PlaylistSong) {
+    const findIdx = this.store.favorites.findIndex(i => i.bvid === item.bvid && i.cid === item.cid)
     if (findIdx === -1)
       return
 
@@ -70,5 +75,13 @@ export class LocalStorageDB extends SongListDB {
 
   async getFavorite() {
     return this.store.favorites
+  }
+
+  async modifyCollectionTitle(bvid: string, title: string) {
+    const findIdx = this.collectionfindIndex(bvid)
+    if (findIdx === -1)
+      return
+
+    this.store.collections[findIdx].title = title
   }
 }

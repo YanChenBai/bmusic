@@ -7,17 +7,37 @@ const props = defineProps<{
 }>()
 
 const playlistStore = usePlaylistStore()
+const db = useDB()
 
-function onClick() {
+const hasPlaylist = computed(() => playlistStore.has(props.song.bvid, props.song.cid))
+const hasFavorite = computed(() => db.hasFavorite(props.song.bvid, props.song.cid))
+
+function onAddPlaylistClick() {
   playlistStore.push(props.song)
 }
 
-const has = computed(() => playlistStore.has(props.song.bvid, props.song.cid))
+function onFavoriteClick() {
+  if (hasFavorite.value) {
+    db.removeFavorite(props.song)
+  }
+  else {
+    db.addFavorite(props.song)
+  }
+}
 </script>
 
 <template>
-  <div>
-    <NButton circle quaternary :disabled="has" @click.stop="onClick">
+  <div class="flex gap-2">
+    <NButton text :type="hasFavorite ? 'primary' : undefined" @click.stop="onFavoriteClick">
+      <template #icon>
+        <NIcon size="22">
+          <div v-if="hasFavorite" class="i-material-symbols:favorite-rounded" />
+          <div v-else class="i-material-symbols:favorite-outline-rounded" />
+        </NIcon>
+      </template>
+    </NButton>
+
+    <NButton text :disabled="hasPlaylist" @click.stop="onAddPlaylistClick">
       <template #icon>
         <NIcon size="22">
           <div class="i-material-symbols:add-circle-outline-rounded" />

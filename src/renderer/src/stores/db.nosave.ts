@@ -1,15 +1,21 @@
-import type { CollectionItem, FavoriteItem } from '@renderer/utils/songDB'
+import type { PlaylistSong } from '@renderer/types/playlist'
+import type { CollectionItem } from '@renderer/utils/songDB'
 import { SongListDB } from '@renderer/utils/songDB'
 
 export class NotSaveDB extends SongListDB {
   collections = ref<CollectionItem[]>([])
-  favorites = ref<FavoriteItem[]>([])
+  favorites = ref<PlaylistSong[]>([])
+
+  collectionfindIndex(bvid: string) {
+    return this.collections.value.findIndex(i => i.bvid === bvid)
+  }
+
   async isInCollection(item: CollectionItem) {
     return this.collections.value.some(i => i.bvid === item.bvid)
   }
 
-  async isInFavorite(item: FavoriteItem) {
-    return this.favorites.value.some(i => i.bvid === item.bvid)
+  async isInFavorite(item: PlaylistSong) {
+    return this.favorites.value.some(i => i.bvid === item.bvid && i.cid === item.cid)
   }
 
   async addCollection(item: CollectionItem) {
@@ -18,22 +24,22 @@ export class NotSaveDB extends SongListDB {
     this.collections.value.push(item)
   }
 
-  async addFavorite(item: FavoriteItem) {
+  async addFavorite(item: PlaylistSong) {
     if (await this.isInFavorite(item))
       return
     this.favorites.value.push(item)
   }
 
-  async removeCollection(item: CollectionItem) {
-    const findIdx = this.collections.value.findIndex(i => i.bvid === item.bvid)
+  async removeCollection(bvid: string) {
+    const findIdx = this.collectionfindIndex(bvid)
     if (findIdx === -1)
       return
 
     this.collections.value.splice(findIdx, 1)
   }
 
-  async removeFavorite(item: FavoriteItem) {
-    const findIdx = this.favorites.value.findIndex(i => i.bvid === item.bvid)
+  async removeFavorite(item: PlaylistSong) {
+    const findIdx = this.favorites.value.findIndex(i => i.bvid === item.bvid && i.cid === item.cid)
     if (findIdx === -1)
       return
 
@@ -46,5 +52,13 @@ export class NotSaveDB extends SongListDB {
 
   async getFavorite() {
     return this.favorites.value
+  }
+
+  async modifyCollectionTitle(bvid: string, title: string) {
+    const findIdx = this.collectionfindIndex(bvid)
+    if (findIdx === -1)
+      return
+
+    this.collections.value[findIdx].title = title
   }
 }
