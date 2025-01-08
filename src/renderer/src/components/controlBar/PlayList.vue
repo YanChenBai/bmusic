@@ -47,22 +47,6 @@ function platSong(song: PlaylistSong) {
   setPlaySong(song)
 }
 
-// 监听是否开启多选
-watchEffect(() => {
-  if (!checkboxState.value)
-    selectedSongs.value = []
-})
-
-// 监听全选状态变更
-watchEffect(() => {
-  if (isSelectedAll.value) {
-    selectedSongs.value = playlist.value.map(v => `${v.bvid}:${v.cid}`)
-  }
-  else {
-    selectedSongs.value = []
-  }
-})
-
 function onShow(state: boolean) {
   if (!state)
     return
@@ -77,6 +61,26 @@ function onShow(state: boolean) {
 
   nextTick(() => scrollEl.value?.scrollTo(0, index * 52))
 }
+
+function onSelectAll(state: boolean) {
+  if (state) {
+    selectedSongs.value = playlist.value.map(v => `${v.bvid}:${v.cid}`)
+  }
+  else {
+    selectedSongs.value = []
+  }
+}
+
+// 监听是否开启多选
+watchEffect(() => {
+  if (!checkboxState.value)
+    selectedSongs.value = []
+})
+
+// 监听选中歌曲变更
+watch(selectedSongs, () => {
+  isSelectedAll.value = selectedSongs.value.length === playlist.value.length
+})
 
 watch(drawerState, onShow)
 </script>
@@ -117,8 +121,8 @@ watch(drawerState, onShow)
 
         <NScrollbar ref="scroll" class="px3 box-border pos-relative" content-class="pb-3">
           <div v-show="checkboxState" class="pt-2 pl2">
-            <!-- <NCheckbox v-model:checked="isSelectedAll" size="small" label="全选" />
-            <NDivider vertical /> -->
+            <NCheckbox v-model:checked="isSelectedAll" size="small" label="全选" @update-checked="onSelectAll" />
+            <NDivider vertical />
             已选中{{ selectedSongs.length }}首
           </div>
           <NCheckboxGroup v-if="playlist.length" v-model:value="selectedSongs">
