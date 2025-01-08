@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PlaylistSong } from '@renderer/stores/player'
+import type { PlaylistSong } from '@renderer/types/playlist'
 
 withDefaults(
   defineProps<{

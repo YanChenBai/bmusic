@@ -11,6 +11,12 @@
   transform: translateX(10px);
 }
 
+@font-face {
+  font-family: 'hmos';
+  src: url('./fonts/HarmonyOS_Sans_Regular.ttf');
+}
+
 body {
   overflow: hidden;
+  font-family: 'hmos';
 }

@@ -245,6 +245,7 @@ declare global {
   const usePlayerCtrl: typeof import('./src/stores/player')['usePlayerCtrl']
   const usePlayerStore: typeof import('./src/stores/player')['usePlayerStore']
   const usePlayerStoreRefs: typeof import('./src/stores/player')['usePlayerStoreRefs']
+  const usePlaylistStore: typeof import('./src/stores/playlist')['usePlaylistStore']
   const usePointer: typeof import('@vueuse/core')['usePointer']
   const usePointerLock: typeof import('@vueuse/core')['usePointerLock']
   const usePointerSwipe: typeof import('@vueuse/core')['usePointerSwipe']
@@ -345,7 +346,7 @@ declare global {
   export type { NotSaveDB } from './src/stores/db.nosave'
   import('./src/stores/db.nosave')
   // @ts-ignore
-  export type { PlayerModeEnum, PlayerStateEnum, PlaylistSong, PlayerInfo, PlayQuality } from './src/stores/player'
+  export type { PlayerModeEnum, PlayerStateEnum, PlayerInfo, PlayQuality } from './src/stores/player'
   import('./src/stores/player')
   // @ts-ignore
   export type { Option, GetActionMap } from './src/utils/contextMenu'

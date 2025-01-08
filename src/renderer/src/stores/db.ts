@@ -3,24 +3,28 @@ import { DBModeEnum, useConfigStore } from './config'
 import { LocalStorageDB } from './db.localstorage'
 import { NotSaveDB } from './db.nosave'
 
-export const useDB = createSharedComposable(() => {
-  const instances = {
-    [DBModeEnum.LOCAL_STORAGE]: new LocalStorageDB(),
-    [DBModeEnum.NOT_SAVE]: new NotSaveDB(),
-  }
+const strategies = {
+  [DBModeEnum.LOCAL_STORAGE]: LocalStorageDB,
+  [DBModeEnum.NOT_SAVE]: NotSaveDB,
+}
 
+const instances = new Map<DBModeEnum, SongListDB>()
+
+export const useDB = createSharedComposable(() => {
   // 确保有一个默认的 dbMode
   const configStore = useConfigStore()
   const mode = computed(() => configStore.config.dbMode ?? DBModeEnum.LOCAL_STORAGE)
 
   const instance = computed(() => {
-    const currentInstance = instances[mode.value]
-    if (!currentInstance) {
-      console.error(`Invalid dbMode: ${mode.value}, falling back to LOCAL_STORAGE`)
-      return instances[DBModeEnum.LOCAL_STORAGE]
-    }
+    if (instances.has(mode.value))
+      return instances.get(mode.value)!
 
-    return currentInstance
+    const Strategie = strategies[mode.value]
+
+    const strategie = new Strategie()
+    instances.set(mode.value, strategie)
+
+    return strategie
   })
 
   const db: SongListDB = {

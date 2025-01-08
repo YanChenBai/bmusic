@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PlaylistSong } from '@renderer/stores/player'
+import type { PlaylistSong } from '@renderer/types/playlist'
 import { NEllipsis } from 'naive-ui'
 
 defineProps<{ song: PlaylistSong }>()

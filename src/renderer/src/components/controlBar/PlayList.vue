@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import type { PlaylistSong } from '@renderer/stores/player'
+import type { PlaylistSong } from '@renderer/types/playlist'
+import { usePlaylistStore } from '@renderer/stores/playlist'
 
 const scrollEl = useTemplateRef('scroll')
 const [drawerState, drawerToggle] = useToggle(false)
 const [checkboxState, checkboxToggle] = useToggle(false)
-const { playlist, curPlaySong } = usePlayerStoreRefs()
-const { isCurPlaySong, delPlaylist, setPlaySong } = usePlayerStore()
+const { curPlaySong } = usePlayerStoreRefs()
+const playlistStore = usePlaylistStore()
+const { playlist } = storeToRefs(playlistStore)
+const { isCurPlaySong, setPlaySong } = usePlayerStore()
 const selectedSongs = ref<string[]>([])
 const isSelectedAll = ref(false)
 
@@ -31,7 +34,7 @@ function batchDel() {
 
   selectedSongs.value.forEach((v) => {
     const [bvid, cid] = v.split(':')
-    delPlaylist(bvid, Number(cid))
+    playlistStore.remove(bvid, Number(cid))
   })
 
   selectedSongs.value = []
@@ -145,7 +148,7 @@ watch(drawerState, onShow)
                 </div>
               </div>
               <div class="pos-absolute right-2 top-0 h-full group-hover:flex items-center hidden">
-                <NButton circle secondary @click.stop="() => delPlaylist(item.bvid, item.cid)">
+                <NButton circle secondary @click.stop="() => playlistStore.remove(item.bvid, item.cid)">
                   <template #icon>
                     <NIcon>
                       <div class="i-material-symbols:delete-rounded" />

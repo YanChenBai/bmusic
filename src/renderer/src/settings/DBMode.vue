@@ -16,7 +16,7 @@ const dbModeOptions = [
 </script>
 
 <template>
-  <SettingItem title="存储模式">
+  <SettingItem title="歌单存储模式">
     <NSelect v-model:value="config.dbMode" class="w-50" :options="dbModeOptions" />
   </SettingItem>
 </template>

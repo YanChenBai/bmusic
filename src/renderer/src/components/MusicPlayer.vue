@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { usePlayerStoreRefs } from '@renderer/stores/player'
+import { onJumpProgress, onPlayerState, onQualityChange, onSongChange, usePlayerStoreRefs } from '@renderer/stores/player'
 import { useSongSwitcher } from '@renderer/utils/songSwitcher'
 
 const audioRef = useTemplateRef('audioRef')
 const { playerInfo, curPlaySong } = usePlayerStoreRefs()
 const songSwitcher = useSongSwitcher()
-const { onPlayerState, recoverPlaySong, onSetProgress } = usePlayerStore()
+const { recoverPlaySong, updateProgress, playerStateToggle } = usePlayerStore()
 
 onMounted(() => {
   const el = audioRef.value
@@ -14,19 +14,17 @@ onMounted(() => {
 
   el.currentTime = playerInfo.value.progress
 
-  el.addEventListener('timeupdate', () => {
-    playerInfo.value.progress = el.currentTime
-  })
+  recoverPlaySong()
 
-  el.addEventListener('pause', () => playerInfo.value.state = PlayerStateEnum.PAUSE)
-  el.addEventListener('play', () => playerInfo.value.state = PlayerStateEnum.PLAY)
+  el.addEventListener('timeupdate', () => updateProgress(el.currentTime))
+
+  el.addEventListener('pause', () => playerStateToggle(PlayerStateEnum.PAUSE))
+  el.addEventListener('play', () => playerStateToggle(PlayerStateEnum.PLAY))
 
   el.addEventListener('ended', () => songSwitcher.autoNext())
-
-  recoverPlaySong()
 })
 
-onSetProgress((val) => {
+onJumpProgress((val) => {
   const el = audioRef.value
   if (!el)
     return
@@ -52,18 +50,31 @@ onPlayerState((state) => {
   }
 })
 
-/** 监听播放地址变化 */
-watch(
-  () => playerInfo.value.url,
-  (url) => {
-    const el = audioRef.value
-    if (!el || !url)
-      return
+function modifyAudioUrl(url: string, time?: number) {
+  const el = audioRef.value
+  if (!el)
+    return
 
-    el.src = url
-    el.play()
-  },
-)
+  el.src = url
+
+  if (time)
+    el.currentTime = time
+
+  el.play()
+}
+
+/** 监听播放地址变化 */
+onSongChange(() => {
+  const url = playerInfo.value.url
+  if (url)
+    modifyAudioUrl(url)
+})
+
+onQualityChange((quality) => {
+  const url = quality.url
+  if (url)
+    modifyAudioUrl(url, playerInfo.value.progress)
+})
 
 /** 监听音量变换且同步 */
 watchEffect(() => {
@@ -74,6 +85,7 @@ watchEffect(() => {
   el.volume = playerInfo.value.volume / 100
 })
 
+/** 输出设备切换 */
 watchEffect(() => {
   const el = audioRef.value
   const id = playerInfo.value.deviceId

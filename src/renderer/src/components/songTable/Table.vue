@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PlaylistSong } from '@renderer/stores/player'
+import type { PlaylistSong } from '@renderer/types/playlist'
 import type { DataTableColumns } from 'naive-ui'
 import type { HTMLAttributes } from 'vue'
 import CtrlCol from './columns/Ctrl.vue'

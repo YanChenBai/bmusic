@@ -28,7 +28,7 @@ function onBack() {
   <div class="border-(0 b-1px solid #2E2E30) drag grid-(~ cols-[220px_1fr]) content-center">
     <div class="flex items-center gap0.5 pl5 pt1">
       <div class="i-material-symbols:music-cast-rounded size-7.8 text-#EE5F8E" />
-      <NGradientText :size="22" class="font-900">
+      <NGradientText :size="22" class="font-900 select-none">
         BMUSIC
       </NGradientText>
     </div>
@@ -40,6 +40,7 @@ function onBack() {
             <NInput
               v-model:value="inputVal"
               :autofocus="false"
+              placeholder="请输入BV号"
               @keydown.enter="search"
             />
             <NButton type="primary" ghost @click="search">

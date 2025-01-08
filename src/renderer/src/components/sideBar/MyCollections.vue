@@ -28,12 +28,12 @@ const { onContextmenu, onClickoutside, showDropdown, handleSelect, x, y }
 <template>
   <div class="box-border grid gap-2" @contextmenu.stop.prevent="onContextmenu">
     <div class="flex justify-between items-center box-border pr-1">
-      <div class="text-#fff text-md font-bold">
+      <div class="text-#fff text-3 font-bold">
         我的合集
       </div>
       <!-- <NButton quaternary circle size="small">
         <template #icon>
-          <NIcon :size="20">
+          <NIcon :size="18">
             <div class="i-material-symbols:add-2-rounded" />
           </NIcon>
         </template>

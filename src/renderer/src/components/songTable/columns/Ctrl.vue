@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import type { PlaylistSong } from '@renderer/stores/player'
+import type { PlaylistSong } from '@renderer/types/playlist'
+import { usePlaylistStore } from '@renderer/stores/playlist'
 
 const props = defineProps<{
   song: PlaylistSong
 }>()
 
-const { pushPlaylist, hasPlaylist } = usePlayerStore()
+const playlistStore = usePlaylistStore()
 
 function onClick() {
-  pushPlaylist(props.song)
+  playlistStore.push(props.song)
 }
 
-const has = computed(() => hasPlaylist(props.song))
+const has = computed(() => playlistStore.has(props.song.bvid, props.song.cid))
 </script>
 
 <template>

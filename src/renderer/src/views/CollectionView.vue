@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import type { PlaylistSong } from '@renderer/stores/player'
+import type { PlaylistSong } from '@renderer/types/playlist'
 import SongTable from '@renderer/components/songTable'
 import { useDB } from '@renderer/stores/db'
+import { usePlaylistStore } from '@renderer/stores/playlist'
 import { NEllipsis, NSpin } from 'naive-ui'
 
 const props = defineProps<{
   bvid: string
 }>()
 
-const { setPlaySong, pushPlaylist } = usePlayerStore()
+const playlistStore = usePlaylistStore()
+const { setPlaySong } = usePlayerStore()
 const { addCollection } = useDB()
 
 const { data, error, isLoading } = useQuery({
@@ -69,7 +71,7 @@ function playCollection() {
   if (!list || list.length === 0)
     return
 
-  list.forEach(item => pushPlaylist(item))
+  playlistStore.push(list)
   setPlaySong(list[0])
 }
 
@@ -109,7 +111,7 @@ function onAddCollection() {
 
                 <SkeletonPlaceholder :loading="isLoading" skeleton-class="max-w-300px" :repeat="2">
                   <div class="text-(3 #A2A2A3)">
-                    <NEllipsis class="overflow-hidden whitespace-pre max-w-600px" expand-trigger="click" line-clamp="1" :tooltip="false">
+                    <NEllipsis class="overflow-hidden whitespace-pre-line max-w-600px" expand-trigger="click" line-clamp="1" :tooltip="false">
                       {{ data?.desc }}
                     </NEllipsis>
                   </div>

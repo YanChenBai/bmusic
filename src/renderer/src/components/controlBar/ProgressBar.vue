@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { jumpProgress } from '@renderer/stores/player'
 import { formatSeconds } from '@renderer/utils/formatSeconds'
 
 const progressBar = useTemplateRef('progressBar')
-const { setProgress } = usePlayerStore()
 const { playerInfo } = usePlayerStoreRefs()
 const showPopover = ref(false)
 const { height } = useWindowSize()
@@ -64,18 +64,18 @@ function onMove(event: MouseEvent) {
 }
 
 /** 跳到指定时间 */
-function seek(event: MouseEvent) {
+function jump(event: MouseEvent) {
   const el = progressBar.value
   if (!el)
     return
 
   const progress = getPercentage(event) * playerInfo.value.longTime
 
-  setProgress(progress)
+  jumpProgress(progress)
 }
 
 function onMouseUp(event: MouseEvent) {
-  seek(event)
+  jump(event)
 }
 </script>
 
