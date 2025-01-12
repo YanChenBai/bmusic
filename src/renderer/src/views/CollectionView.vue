@@ -89,7 +89,7 @@ function addOrRemove() {
   }
 }
 
-const title = computed(() => collections.value.find(item => item.bvid === props.bvid)?.title)
+const title = computed(() => collections.value.find(item => item.bvid === props.bvid)?.title ?? data.value?.title)
 </script>
 
 <template>
