@@ -1,5 +1,5 @@
 import type { PlayUrl } from '~types/get-playurl'
-import type { MediaInfo } from '~types/media-info'
+import type { PlayerInfo } from '~types/player-info'
 import type { VideoPlayerData } from '~types/playlist'
 import type { Resp } from '~types/resp'
 import { request } from '@main/utils/request'
@@ -11,18 +11,6 @@ export async function getPlaylist(bvid: string) {
     },
   })
     .json<Resp<VideoPlayerData>>()
-
-  return data
-}
-
-export async function getMediaInfo(bvid: string, cid: number) {
-  const data = await request.get('x/player/playurl', {
-    searchParams: {
-      bvid,
-      cid,
-      platform: 'html5',
-    },
-  }).json<Resp<MediaInfo>>()
 
   return data
 }
@@ -47,4 +35,13 @@ export async function getPlayUrl(bvid: string, cid: number, sessdata?: string) {
       fourk: '1',
     },
   }).json<Resp<PlayUrl>>()
+}
+
+export async function getPlayerInfo(bvid: string, cid: number) {
+  return await request.get('x/player/wbi/v2', {
+    searchParams: {
+      bvid,
+      cid,
+    },
+  }).json<Resp<PlayerInfo>>()
 }

@@ -8,6 +8,7 @@
       <CurPlayInfo />
       <ControlBtns />
       <div class="size-full items-center flex justify-end gap-2">
+        <SectionSelect />
         <QualitySelect />
         <PlayMode />
         <VolumeControl />

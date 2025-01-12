@@ -1,12 +1,14 @@
 import type { PlaylistSong } from '@renderer/types/playlist'
 import type { CollectionItem, SongListDB } from '@renderer/utils/songDB'
 import { DBModeEnum, useConfigStore } from './config'
+import { IndexDB } from './db.indexdb'
 import { LocalStorageDB } from './db.localstorage'
 import { NotSaveDB } from './db.nosave'
 
 const strategies = {
   [DBModeEnum.LOCAL_STORAGE]: LocalStorageDB,
   [DBModeEnum.NOT_SAVE]: NotSaveDB,
+  [DBModeEnum.INDEX_DB]: IndexDB,
 }
 
 const instances = new Map<DBModeEnum, SongListDB>()

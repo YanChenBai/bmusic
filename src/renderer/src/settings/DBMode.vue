@@ -9,6 +9,10 @@ const dbModeOptions = [
     value: DBModeEnum.LOCAL_STORAGE,
   },
   {
+    label: 'IndexDB',
+    value: DBModeEnum.INDEX_DB,
+  },
+  {
     label: '不保存',
     value: DBModeEnum.NOT_SAVE,
   },

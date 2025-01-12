@@ -46,14 +46,6 @@ export class NotSaveDB extends SongListDB {
     this.favorites.value.splice(findIdx, 1)
   }
 
-  async getCollection() {
-    return this.collections.value
-  }
-
-  async getFavorite() {
-    return this.favorites.value
-  }
-
   async modifyCollectionTitle(bvid: string, title: string) {
     const findIdx = this.collectionfindIndex(bvid)
     if (findIdx === -1)

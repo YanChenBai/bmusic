@@ -2,6 +2,7 @@
 import { jumpProgress } from '@renderer/stores/player'
 import { formatSeconds } from '@renderer/utils/formatSeconds'
 
+const OFFSET = 8
 const progressBar = useTemplateRef('progressBar')
 const { playerInfo } = usePlayerStoreRefs()
 const showPopover = ref(false)
@@ -33,19 +34,18 @@ function getPercentage(event: MouseEvent) {
   if (!el)
     return 0
 
-  const offset = 8
   const left = getLeft(event)
   const offsetWidth = el.offsetWidth
 
   /** 避免点击到边界时失效 */
-  if (left <= offset) {
+  if (left <= OFFSET) {
     return 0
   }
-  else if (left >= offsetWidth - offset) {
+  else if (left >= offsetWidth - OFFSET) {
     return 1
   }
   else {
-    return Number(((left - offset) / (offsetWidth - offset * 2)).toFixed(4))
+    return Number(((left - OFFSET) / (offsetWidth - OFFSET * 2)).toFixed(4))
   }
 }
 

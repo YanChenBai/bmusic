@@ -69,14 +69,6 @@ export class LocalStorageDB extends SongListDB {
     this.store.favorites.splice(findIdx, 1)
   }
 
-  async getCollection() {
-    return this.store.collections
-  }
-
-  async getFavorite() {
-    return this.store.favorites
-  }
-
   async modifyCollectionTitle(bvid: string, title: string) {
     const findIdx = this.collectionfindIndex(bvid)
     if (findIdx === -1)

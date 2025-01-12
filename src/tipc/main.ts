@@ -1,5 +1,5 @@
 import type { PlayUrl } from '~types/get-playurl'
-import type { MediaInfo } from '~types/media-info'
+import type { PlayerInfo } from '~types/player-info'
 import type { VideoPlayerData } from '~types/playlist'
 import type { Resp } from '~types/resp'
 import { defineProto, Method } from '@byc/tipc'
@@ -7,14 +7,11 @@ import { defineProto, Method } from '@byc/tipc'
 export const MainHandlerProto = defineProto('MainWin', {
   /** 获取播放列表 */
   getPlaylist: Method as (bvid: string) => Promise<Resp<VideoPlayerData>>,
-  /**
-   * @deprecated
-   * 获取媒体信息
-   */
-  getMediaInfo: Method as (bvid: string, cid: number) => Promise<Resp<MediaInfo>>,
 
   /** 获取播放url */
   getPlayUrl: Method as (bvid: string, cid: number, sessdata?: string) => Promise<Resp<PlayUrl>>,
+
+  getPlayerInfo: Method as (bvid: string, cid: number, sessdata?: string) => Promise<Resp<PlayerInfo>>,
 
   /** 关闭窗口 */
   close: Method as () => void,
